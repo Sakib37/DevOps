@@ -1,0 +1,44 @@
+Service Discovery: Zookeeper vs etcd vs Consul:
+        source: https://technologyconversations.com/2015/09/08/service-discovery-zookeeper-vs-etcd-vs-consul/
+
+        Zookeeper: ZooKeeper is one of the oldest projects of this type. It originated
+        out of the Hadoop world, where it was built to help in the maintenance of the
+        various components in a Hadoop cluster. It is mature, reliable and used by many
+         big companies (YouTube, eBay, Yahoo, and so on).
+
+        The main advantages Zookeeper brings to the table is its maturity, robustness
+        and feature richness. However, it comes with its own set of disadvantages as
+        well, with Java and complexity being main culprits. While Java is great for many
+        use cases, it is very heavy for this type of work. Zookeeper’s usage of Java
+        together with a considerable number of dependencies makes it much more resource
+        hungry that its competition. On top of those problems, Zookeeper is complex.
+        Maintaining it requires considerably more knowledge than we should expect from
+        an application of this type.
+
+
+        Etcd: etcd is a key/value store accessible through HTTP. It is distributed and
+        features hierarchical configuration system that can be used to build service
+        discovery. It is very easy to deploy, setup and use, provides reliable data
+        persistence, it’s secure and with a very good documentation.
+
+        etcd is a better option than Zookeeper due to its simplicity. However, it needs
+        to be combined with few third-party tools before it can serve service discovery
+        objectives.
+
+        Consul: Consul is strongly consistent datastore that uses gossip to form dynamic
+        clusters. It features hierarchical key/value store that can be used not only
+        to store data but also to register watches that can be used for a variety of
+        tasks from sending notifications about data changes to running health checks
+        and custom commands depending on their output.
+
+        Unlike Zookeeper and etcd, Consul implements service discovery system embedded
+        so there is no need to build your own or use a third-party one. This discovery
+        includes, among other things, health checks of nodes and services running on top
+        of them.
+        
+
+        Consul together with the tools we explored is in many cases a better solution
+        than what etcd offers. It was designed with services architecture and discovery
+        in mind. It is simple, yet powerful. It provides a complete solution without
+        sacrificing simplicity and, in many cases, it is the best tool for service
+        discovery and health checking needs.
