@@ -1,4 +1,4 @@
-KUPA: HA Kubernetes Platform Simulation Using Vagrant
+K8s_Dev: HA Kubernetes Platform Simulation Using Vagrant
 ========================================================
 
 A vagrant-based highly available Kubernetes Development Environment 
@@ -9,16 +9,16 @@ Components, Tools and Versions
 |component  | version|
 | --------- |  -------- |
 |ubuntu | 16.04.3 |
-|kubernetes | 1.10.0 |
-|docker | 1.13.1 |
-|etcd | 3.2.18 |
+|kubernetes | 1.12.2 |
+|docker | 1.17.03 |
+|etcd | 3.3.10 |
 |rook (ceph storage) | 0.7.0 |
 |cni | 0.6.0 |
 |cri-containerd | 1.0.0-alpha.0 |
 |runc | 1.0.0-rc4 |
-|weave net | 2.0.5 |
+|weave net | 2.4.1 |
 |istio | 0.7.0|
-|cfssl | 1.2.0 |
+|cfssl | 1.3.2 |
 
 
 Required arguments
