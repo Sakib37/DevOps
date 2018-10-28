@@ -1,0 +1,141 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: product-intelligence-grafana
+  namespace: product-intelligence-commons
+  labels:
+    app: product-intelligence-grafana
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+    limits:
+      storage: 5Gi
+  storageClassName: rook-block
+
+---
+
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: product-intelligence-grafana
+  namespace: product-intelligence-commons
+  labels:
+    app: product-intelligence-grafana
+spec:
+  minReplicas: 1
+  maxReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: product-intelligence-grafana
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 90
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 90
+
+---
+
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: product-intelligence-grafana
+  namespace: product-intelligence-commons
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-intelligence-grafana
+  namespace: product-intelligence-commons
+  labels:
+    app: product-intelligence-grafana
+spec:
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  selector:
+    app: product-intelligence-grafana
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-intelligence-grafana
+  namespace: product-intelligence-commons
+  labels:
+    app: product-intelligence-grafana
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  selector:
+    matchLabels:
+      app: product-intelligence-grafana
+  template:
+    metadata:
+      labels:
+        app: product-intelligence-grafana
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+      containers:
+      - name: grafana
+        image: quay.io/coreos/monitoring-grafana:5.0.0
+        volumeMounts:
+        - name: grafana-storage
+          mountPath: /data
+        - name: grafana-datasources
+          mountPath: /grafana/conf/provisioning/datasources
+        - name: grafana-dashboards
+          mountPath: /grafana/conf/provisioning/dashboards
+        - name: grafana-dashboard-definitions-0
+          mountPath: /grafana-dashboard-definitions/0
+        - name: grafana-dashboard-definitions-1
+          mountPath: /grafana-dashboard-definitions/1
+        - name: grafana-dashboard-definitions-2
+          mountPath: /grafana-dashboard-definitions/2
+        - name: grafana-dashboard-definitions-3
+          mountPath: /grafana-dashboard-definitions/3
+        ports:
+        - name: web
+          containerPort: 3000
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 100m
+          limits:
+            memory: 200Mi
+            cpu: 200m
+      volumes:
+      - name: grafana-storage
+        emptyDir:
+      - name: grafana-datasources
+        configMap:
+          name: product-intelligence-grafana-datasources
+      - name: grafana-dashboards
+        configMap:
+          name: product-intelligence-grafana-dashboards
+      - name: grafana-dashboard-definitions-0
+        configMap:
+          name: product-intelligence-grafana-dashboard-definitions-0
+      - name: grafana-dashboard-definitions-1
+        configMap:
+          name: product-intelligence-grafana-dashboard-definitions-1
+      - name: grafana-dashboard-definitions-2
+        configMap:
+          name: product-intelligence-grafana-dashboard-definitions-2
+      - name: grafana-dashboard-definitions-3
+        configMap:
+          name: product-intelligence-grafana-dashboard-definitions-3

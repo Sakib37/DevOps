@@ -1,0 +1,10 @@
+tls/*
+.idea
+.vagrant/
+conf/etcd-discovery
+conf/data-encryption-config.yaml
+logs/*
+packages/
+conf/kubeconfig/
+conf/ca-chain.pem
+disks

@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: goldfish
+  namespace: security-system
+  labels:
+    app: goldfish
+    version: 0.7.3
+type: Opaque
+data:
+  vault-addr: "aHR0cDovL3ZhdWx0OjgyMDA="
+  vault-token: "dG9rZW4="
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: goldfish
+  namespace: security-system
+  labels:
+    app: goldfish
+    version: 0.7.3
+data:
+  docker.json: |
+    {"disable_mlock":1,"listener":{"tcp":{"address":"0.0.0.0:8000","tls_cert_file":"","tls_disable":1,"tls_key_file":""}},"vault":{"address":"http://vault:8200","approle_id":"goldfish","approle_login":"auth/approle/login","runtime_config":"secret/goldfish","tls_skip_verify":1}}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: goldfish
+  namespace: security-system
+  labels:
+    app: goldfish
+    version: 0.7.3
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8000
+      protocol: TCP
+      name: nginx
+  selector:
+    app: goldfish
+    version: 0.7.3
+
+---
+
+#TODO custom hcl, vault token in cmd
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goldfish
+  namespace: security-system
+  labels:
+    app: goldfish
+    version: 0.7.3
+spec:
+  selector:
+    matchLabels:
+      app: goldfish
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: goldfish
+        version: 0.7.3
+    spec:
+      containers:
+        - name: goldfish
+          image: "quay.io/tuannvm/goldfish:v0.7.3"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+          - name: VAULT_ADDR
+            valueFrom:
+              secretKeyRef:
+                name: goldfish
+                key: vault-addr
+          - name: VAULT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: goldfish
+                key: vault-token
+          command:
+          - /app/entrypoint.sh
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+          volumeMounts:
+          - name: goldfish-config
+            mountPath: /app/docker.json
+            subPath: docker.json
+          resources:
+            {}
+      volumes:
+        - name: goldfish-config
+          configMap:
+            name: "goldfish"
+
+---

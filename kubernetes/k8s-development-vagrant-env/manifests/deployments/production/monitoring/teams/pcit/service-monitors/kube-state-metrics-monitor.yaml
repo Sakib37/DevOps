@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kube-state-metrics-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - pcit-commons
+  selector:
+    matchLabels:
+      app: kube-state-metrics
+  endpoints:
+  - port: http-metrics
+    path: /metrics
+    interval: 15s

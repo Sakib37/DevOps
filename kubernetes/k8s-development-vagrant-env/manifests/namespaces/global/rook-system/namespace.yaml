@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rook-system
+  labels:
+    team: pcit
+    env: rook-system
+    monitor: "true"
+
+---

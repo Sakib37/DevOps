@@ -1,0 +1,86 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-envoy-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      istio: mixer
+  endpoints:
+  - port: statsd-prom
+    path: /metrics
+    interval: 15s
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-mesh-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      istio: mixer
+  endpoints:
+  - port: prometheus
+    path: /metrics
+    interval: 15s
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-mixer-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      istio: mixer
+  endpoints:
+  - port: http-monitoring
+    path: /metrics
+    interval: 15s
+
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-pilot-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      istio: pilot
+  endpoints:
+  - port: http-monitoring
+    path: /metrics
+    interval: 15s

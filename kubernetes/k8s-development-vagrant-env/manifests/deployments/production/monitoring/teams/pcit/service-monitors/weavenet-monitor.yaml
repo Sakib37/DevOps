@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pcit-weavenet-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - kube-system
+  selector:
+    matchLabels:
+      name: weave-net
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s

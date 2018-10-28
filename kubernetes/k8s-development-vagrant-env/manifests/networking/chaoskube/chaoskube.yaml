@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: chaoskube
+  namespace: kube-system
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: chaoskube
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "delete"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: chaoskube
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: chaoskube
+subjects:
+- kind: ServiceAccount
+  name: chaoskube
+  namespace: kube-system
+
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: chaoskube-pdb
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: chaoskube
+  maxUnavailable: 0
+---
+
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: chaoskube-hpa
+  namespace: kube-system
+  labels:
+    app: chaoskube
+    version: 0.9.0
+spec:
+  minReplicas: 1
+  maxReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: chaoskube
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 90
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 90
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chaoskube
+  namespace: kube-system
+  labels:
+    app: chaoskube
+    version: 0.9.0
+spec:
+  selector:
+    matchLabels:
+      app: chaoskube
+  template:
+    metadata:
+      labels:
+        app: chaoskube
+    spec:
+      serviceAccountName: chaoskube
+      containers:
+      - name: chaoskube
+        image: quay.io/linki/chaoskube:v0.9.0
+        args:
+        # kill a pod every 10 minutes
+        - --interval=30m
+        # target all pods
+        - --labels=
+        # only consider pods with this annotation
+        - --annotations=chaos.alpha.kubernetes.io/enabled=true
+        # exclude all pods in the kube-system namespace
+        - --namespaces=!kube-system
+        # don't kill anything on weekends
+        - --excluded-weekdays=Sat,Sun
+        # don't kill anything during the night or at lunchtime
+        - --excluded-times-of-day=22:00-08:00,11:00-14:00
+        # don't kill anything as a joke or on christmas or new year holidays
+        - --excluded-days-of-year=Apr1,Dec24,Dec25,Dec26,Dec31,Jan1
+        # let's make sure we all agree on what the above times mean
+        - --timezone=Europe/Berlin
+        # terminate pods for real: this disables dry-run mode which is on by default
+        - --no-dry-run

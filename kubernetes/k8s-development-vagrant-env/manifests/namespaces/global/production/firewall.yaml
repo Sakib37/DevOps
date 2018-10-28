@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: production-firewall
+  namespace: production
+  labels:
+    team: pcit
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          env: monitoring-core
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          env: security-system
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          env: kube-system
+    ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+

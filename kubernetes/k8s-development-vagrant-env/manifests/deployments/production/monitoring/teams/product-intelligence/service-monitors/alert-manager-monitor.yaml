@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: product-intelligence-alert-manager-monitor
+  namespace: product-intelligence-commons
+  labels:
+    team: product-intelligence
+    environment: product-intelligence-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - product-intelligence-commons
+  selector:
+    matchLabels:
+      alertmanager: product-intelligence-alert-manager
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s

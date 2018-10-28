@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kube-system
+  labels:
+    team: pcit
+    env: kube-system
+    monitor: "true"
+
+---

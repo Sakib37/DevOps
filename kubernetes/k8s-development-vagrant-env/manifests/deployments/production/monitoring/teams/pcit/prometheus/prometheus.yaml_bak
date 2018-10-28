@@ -1,0 +1,105 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pcit-prometheus
+  namespace: pcit-commons
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pcit-prometheus
+rules:
+- apiGroups: [""]
+  resources: ["nodes","services","endpoints","pods"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get"]
+- nonResourceURLs: ["nodes/metrics", "/metrics"]
+  verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pcit-prometheus
+  namespace: pcit-commons
+subjects:
+- kind: ServiceAccount
+  name: pcit-prometheus
+  namespace: pcit-commons
+roleRef:
+  kind: ClusterRole
+  name: pcit-prometheus
+  apiGroup: "rbac.authorization.k8s.io"
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: pcit-prometheus
+  namespace: pcit-commons
+  labels:
+    prometheus: pcit-prometheus
+spec:
+  replicas: 1
+  serviceAccountName: pcit-prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      team: pcit
+  alerting:
+    alertmanagers:
+    - namespace: pcit-commons
+      name: pcit-alert-manager
+      port: http
+  externalUrl: "http://prometheus.pcit-commons.teams.kubernetes.prod.compute.k8s.pcit.takeawaydata.io"
+  routePrefix: "/"
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "prometheus"
+                operator: In
+                values:
+                - pcit-prometheus
+          topologyKey: "kubernetes.io/hostname"
+  ruleSelector:
+    matchLabels:
+      role: prometheus-alerting-rules
+      prometheus: pcit-prometheus
+  resources:
+    requests:
+      memory: 400Mi
+  retention: 8760h
+  storageSpec:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: rook-block
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pcit-prometheus
+  namespace: pcit-commons
+  labels:
+    prometheus: pcit-prometheus
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 9090
+  selector:
+    prometheus: pcit-prometheus

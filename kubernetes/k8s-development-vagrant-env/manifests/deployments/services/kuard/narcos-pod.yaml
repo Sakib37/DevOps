@@ -1,0 +1,100 @@
+apiVersion: v1
+data:
+  blow.conf: |
+    name=escobar
+    cartel=medellin
+kind: ConfigMap
+metadata:
+  name: narcos
+  namespace: default
+---
+apiVersion: v1
+data:
+  foo: bar
+  one: three
+kind: ConfigMap
+metadata:
+  name: yow
+  namespace: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: narcos
+  labels:
+    app: narcos
+    version: 1.0.0
+    env: prod
+spec:
+  type: ClusterIP
+  selector:
+    app: narcos
+    version: 1.0.0
+    env: prod
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: narcos
+  labels:
+    app: narcos
+    version: 1.0.0
+    env: prod
+  annotations:
+    sidecar.istio.io/inject: "true"
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: narcos
+      labels:
+        app: narcos
+        version: 1.0.0
+        env: prod
+    spec:
+      volumes:
+      - name: narcos-conf
+        configMap:
+          name: narcos
+      - name: yow-conf
+        configMap:
+          name: yow
+      - name: tls-secret
+        secret:
+          secretName: tls-secret
+      containers:
+      - name: narcos
+        image: gcr.io/kuar-demo/kuard-amd64:2
+        volumeMounts:
+        - name: narcos-conf
+          mountPath: /narcos
+        - name: yow-conf
+          mountPath: /yow
+        - name: tls-secret
+          mountPath: /tls
+          readOnly: true
+        env:
+        - name: CARTEL_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: yow
+              key: foo
+        - name: CARTEL_POSITION
+          valueFrom:
+            configMapKeyRef:
+              name: yow
+              key: one
+        - name: BLA
+          value: haha
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+
+
+

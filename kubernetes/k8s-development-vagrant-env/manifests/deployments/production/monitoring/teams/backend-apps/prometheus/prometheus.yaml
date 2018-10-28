@@ -1,0 +1,105 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backend-apps-prometheus
+  namespace: backend-apps-commons
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: backend-apps-prometheus
+rules:
+- apiGroups: [""]
+  resources: ["nodes","services","endpoints","pods"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get"]
+- nonResourceURLs: ["nodes/metrics", "/metrics"]
+  verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: backend-apps-prometheus
+  namespace: backend-apps-commons
+subjects:
+- kind: ServiceAccount
+  name: backend-apps-prometheus
+  namespace: backend-apps-commons
+roleRef:
+  kind: ClusterRole
+  name: backend-apps-prometheus
+  apiGroup: "rbac.authorization.k8s.io"
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: backend-apps-prometheus
+  namespace: backend-apps-commons
+  labels:
+    prometheus: backend-apps-prometheus
+spec:
+  replicas: 1
+  serviceAccountName: backend-apps-prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      team: backend-apps
+  alerting:
+    alertmanagers:
+    - namespace: backend-apps-commons
+      name: backend-apps-alert-manager
+      port: http
+  externalUrl: "http://prometheus.backend-apps-commons.teams.kubernetes.prod.compute.k8s.pcit.takeawaydata.io"
+  routePrefix: "/"
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "prometheus"
+                operator: In
+                values:
+                - backend-apps-prometheus
+          topologyKey: "kubernetes.io/hostname"
+  ruleSelector:
+    matchLabels:
+      role: prometheus-alerting-rules
+      prometheus: backend-apps-prometheus
+  resources:
+    requests:
+      memory: 400Mi
+  retention: 720h
+  storageSpec:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: rook-block
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-apps-prometheus
+  namespace: backend-apps-commons
+  labels:
+    prometheus: backend-apps-prometheus
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 9090
+  selector:
+    prometheus: backend-apps-prometheus

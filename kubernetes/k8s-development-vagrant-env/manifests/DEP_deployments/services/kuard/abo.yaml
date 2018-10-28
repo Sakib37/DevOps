@@ -1,0 +1,103 @@
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta1
+metadata:
+  name: abo-prod-hpa
+  labels:
+    app: abo
+    env: prod
+  namespace: default
+spec:
+  minReplicas: 3
+  maxReplicas: 10
+  scaleTargetRef:
+    kind: Deployment
+    name: abo-prod
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 10
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 5
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: abo-prod-service
+  labels:
+    app: abo
+    env: prod
+spec:
+  type: ClusterIP
+  selector:
+    app: abo
+    env: prod
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: abo-prod
+  labels:
+    app: abo
+    env: prod
+  namespace: default
+  annotations:
+    sidecar.istio.io/inject: "true"
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 10%
+  progressDeadlineSeconds: 600
+  minReadySeconds: 30
+  revisionHistoryLimit: 150
+  template:
+    metadata:
+      name: abo-prod
+      labels:
+        app: abo
+        env: prod
+      namespace: default
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: abo
+          image: gcr.io/kuar-demo/kuard-amd64:2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: 8080
+            initialDelaySeconds: 0
+            periodSeconds: 2
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1

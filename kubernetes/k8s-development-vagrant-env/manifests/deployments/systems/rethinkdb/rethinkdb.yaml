@@ -1,0 +1,135 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rethinkdb-cluster-config
+data:
+  init.sh: |
+    #!/bin/bash
+
+    COMMAND="rethinkdb --bind all --http-port 8080 --cluster-port 28014 --driver-port 28015 --initial-password changeme --no-update-check"
+
+    if [[ "${HOSTNAME}" != "rethinkdb-0" ]]
+    then
+      COMMAND="${COMMAND} --join rethinkdb-0.rethinkdb:28014"
+    fi
+
+    echo "running $COMMAND"
+    $COMMAND
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rethinkdb
+spec:
+  clusterIP: None
+  selector:
+    app: rethinkdb
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: cluster
+      port: 28014
+      targetPort: 28014
+    - name: driver
+      port: 28015
+      targetPort: 28015
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: rethinkdb
+  namespace: default
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: rethinkdb
+  labels:
+    app: rethinkdb
+  annotations:
+    sidecar.istio.io/inject: false
+spec:
+  selector:
+    matchLabels:
+      app: rethinkdb
+  serviceName: rethinkdb
+  replicas: 3
+  revisionHistoryLimit: 150
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: rethinkdb
+        version: 2.3.6
+    spec:
+      serviceAccountName: rethinkdb
+      terminationGracePeriodSeconds: 60
+      volumes:
+        - name: rethinkdb-cluster-config
+          configMap:
+            name: rethinkdb-cluster-config
+      containers:
+        - name: rethinkdb
+          image: rethinkdb:2.3.6
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - /config/init.sh
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: cluster
+              containerPort: 28014
+            - name: driver
+              containerPort: 28015
+          livenessProbe:
+            tcpSocket:
+              port: 28015
+            initialDelaySeconds: 5
+            periodSeconds: 2
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 100Mi
+          volumeMounts:
+            - name: rethinkdb-cluster-config
+              mountPath: /config
+            - name: rethinkdb-volume
+              mountPath: /data
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+  volumeClaimTemplates:
+    - metadata:
+        name: rethinkdb-volume
+        labels:
+          volume: rethinkdb
+      spec:
+        storageClassName: rook-block
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+          limits:
+            storage: 5Gi
+
+

@@ -1,0 +1,63 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pcit-alert-manager-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - pcit-commons
+  selector:
+    matchLabels:
+      alertmanager: pcit-alert-manager
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend-apps-alert-manager-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - backend-apps-commons
+  selector:
+    matchLabels:
+      alertmanager: backend-apps-alert-manager
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: product-intelligence-alert-manager-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - product-intelligence-commons
+  selector:
+    matchLabels:
+      alertmanager: product-intelligence-alert-manager
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s

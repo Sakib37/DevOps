@@ -1,0 +1,193 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: prometheus-alerting-rules
+  namespace: product-intelligence-commons
+  labels:
+    role: prometheus-alerting-rules
+    prometheus: product-intelligence-prometheus
+data:
+  alertmanager.rules.yaml: |+
+    groups:
+    - name: alertmanager.rules
+      rules:
+      - alert: AlertmanagerConfigInconsistent
+        expr: count_values("config_hash", alertmanager_config_hash) BY (service) / ON(service)
+          GROUP_LEFT() label_replace(prometheus_operator_alertmanager_spec_replicas, "service",
+          "alertmanager-$1", "alertmanager", "(.*)") != 1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: The configuration of the instances of the Alertmanager cluster
+            `{{$labels.service}}` are out of sync.
+          summary: Configuration out of sync
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+      - alert: AlertmanagerDownOrMissing
+        expr: label_replace(prometheus_operator_alertmanager_spec_replicas, "job", "alertmanager-$1",
+          "alertmanager", "(.*)") / ON(job) GROUP_RIGHT() sum(up) BY (job) != 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: An unexpected number of Alertmanagers are scraped or Alertmanagers
+            disappeared from discovery.
+          summary: Alertmanager down or missing
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+      - alert: AlertmanagerFailedReload
+        expr: alertmanager_config_last_reload_successful == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Reloading Alertmanager's configuration has failed for {{ $labels.namespace
+            }}/{{ $labels.pod}}.
+          summary: Alertmanager's configuration reload failed
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+  general.rules.yaml: |+
+    groups:
+    - name: general.rules
+      rules:
+      - alert: TargetDown
+        expr: 100 * (count(up == 0) BY (job) / count(up) BY (job)) > 10
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{{ $value }}% of {{ $labels.job }} targets are down.'
+          summary: Targets are down
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+      - alert: DeadMansSwitch
+        expr: vector(1)
+        labels:
+          severity: none
+        annotations:
+          description: This is a DeadMansSwitch meant to ensure that the entire Alerting pipeline is functional.
+          summary: Alerting DeadMansSwitch
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+      - record: fd_utilization
+        expr: process_open_fds / process_max_fds
+      - alert: FdExhaustionClose
+        expr: predict_linear(fd_utilization[1h], 3600 * 4) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{{ $labels.job }}: {{ $labels.namespace }}/{{ $labels.pod }} instance
+            will exhaust in file/socket descriptors within the next 4 hours'
+          summary: file descriptors soon exhausted
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+      - alert: FdExhaustionClose
+        expr: predict_linear(fd_utilization[10m], 3600) > 1
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $labels.job }}: {{ $labels.namespace }}/{{ $labels.pod }} instance
+            will exhaust in file/socket descriptors within the next hour'
+          summary: file descriptors soon exhausted
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+  prometheus.rules.yaml: |+
+    groups:
+    - name: prometheus.rules
+      rules:
+      - alert: PrometheusConfigReloadFailed
+        expr: prometheus_config_last_reload_successful == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Reloading Prometheus' configuration has failed for {{$labels.namespace}}/{{$labels.pod}}
+          summary: Reloading Promehteus' configuration failed
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+      - alert: PrometheusNotificationQueueRunningFull
+        expr: predict_linear(prometheus_notifications_queue_length[5m], 60 * 30) > prometheus_notifications_queue_capacity
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Prometheus' alert notification queue is running full for {{$labels.namespace}}/{{
+            $labels.pod}}
+          summary: Prometheus' alert notification queue is running full
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+      - alert: PrometheusErrorSendingAlerts
+        expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m])
+          > 0.01
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Errors while sending alerts from Prometheus {{$labels.namespace}}/{{
+            $labels.pod}} to Alertmanager {{$labels.Alertmanager}}
+          summary: Errors while sending alert from Prometheus
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+      - alert: PrometheusErrorSendingAlerts
+        expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m])
+          > 0.03
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: Errors while sending alerts from Prometheus {{$labels.namespace}}/{{
+            $labels.pod}} to Alertmanager {{$labels.Alertmanager}}
+          summary: Errors while sending alerts from Prometheus
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+      - alert: PrometheusNotConnectedToAlertmanagers
+        expr: prometheus_notifications_alertmanagers_discovered < 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Prometheus {{ $labels.namespace }}/{{ $labels.pod}} is not connected
+            to any Alertmanagers
+          summary: Prometheus is not connected to any Alertmanagers
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+      - alert: PrometheusTSDBReloadsFailing
+        expr: increase(prometheus_tsdb_reloads_failures_total[2h]) > 0
+        for: 12h
+        labels:
+          severity: warning
+        annotations:
+          description: '{{$labels.job}} at {{$labels.instance}} had {{$value | humanize}}
+            reload failures over the last four hours.'
+          summary: Prometheus has issues reloading data blocks from disk
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+      - alert: PrometheusTSDBCompactionsFailing
+        expr: increase(prometheus_tsdb_compactions_failed_total[2h]) > 0
+        for: 12h
+        labels:
+          severity: warning
+        annotations:
+          description: '{{$labels.job}} at {{$labels.instance}} had {{$value | humanize}}
+            compaction failures over the last four hours.'
+          summary: Prometheus has issues compacting sample blocks
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+      - alert: PrometheusTSDBWALCorruptions
+        expr: tsdb_wal_corruptions_total > 0
+        for: 4h
+        labels:
+          severity: warning
+        annotations:
+          description: '{{$labels.job}} at {{$labels.instance}} has a corrupted write-ahead
+            log (WAL).'
+          summary: Prometheus write-ahead log is corrupted
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+      - alert: PrometheusNotIngestingSamples
+        expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) <= 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: "Prometheus {{ $labels.namespace }}/{{ $labels.pod}} isn't ingesting samples."
+          summary: "Prometheus isn't ingesting samples"
+          runbook: https://yourdelivery.atlassian.net/wiki/spaces/PCIT/pages/272629911/06+-+On-Call+Disaster+Recovery
+
+

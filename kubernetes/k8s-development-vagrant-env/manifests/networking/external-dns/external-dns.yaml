@@ -1,0 +1,205 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: external-dns
+  namespace: kube-system
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: external-dns
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get","watch","list"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get","watch","list"]
+- apiGroups: ["extensions"]
+  resources: ["ingresses"]
+  verbs: ["get","watch","list"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: external-dns-viewer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: external-dns
+subjects:
+- kind: ServiceAccount
+  name: external-dns
+  namespace: kube-system
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: external-dns-public-configmap
+  namespace: kube-system
+data:
+  run-external-dns.sh: |-
+    #!/bin/sh
+
+    source /etc/default/cloud-config.conf
+
+    export FQDN_BASE=public.kubernetes.${SERVER_FQDN}
+
+    /bin/external-dns \
+    --source=service \
+    --source=ingress \
+    --provider=aws \
+    --registry=txt \
+    --fqdn-template={{.Name}}.{{.Namespace}}.${FQDN_BASE} \
+    --annotation-filter=external-dns.alpha.kubernetes.io/public=true \
+    --domain-filter=${SERVER_FQDN} \
+    --aws-zone-type=public \
+    --zone-id-filter=${AWS_ROUTE53_PUBLIC_HOSTED_ZONE} \
+    --txt-owner-id=${KUBERNETES_PLATFORM_CLUSTER_NAME} \
+    --log-level=debug
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: external-dns-private-configmap
+  namespace: kube-system
+data:
+  run-external-dns.sh: |-
+    #!/bin/sh
+
+    source /etc/default/cloud-config.conf
+
+    export FQDN_BASE=private.kubernetes.${SERVER_FQDN}
+
+    /bin/external-dns \
+    --source=service \
+    --source=ingress \
+    --provider=aws \
+    --registry=txt \
+    --fqdn-template={{.Name}}.{{.Namespace}}.${FQDN_BASE} \
+    --annotation-filter=external-dns.alpha.kubernetes.io/private=true \
+    --domain-filter=${SERVER_FQDN} \
+    --aws-zone-type=private \
+    --zone-id-filter=${AWS_ROUTE53_PRIVATE_HOSTED_ZONE} \
+    --txt-owner-id=${KUBERNETES_PLATFORM_CLUSTER_NAME} \
+    --log-level=debug
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-dns-public
+  namespace: kube-system
+  labels:
+    app: external-dns-public
+    version: 0.5.1
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: external-dns-public
+  template:
+    metadata:
+      labels:
+        app: external-dns-public
+        version: 0.5.1
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+    spec:
+      serviceAccountName: external-dns
+      tolerations:
+       - key: node-role.kubernetes.io/master
+         operator: Exists
+      volumes:
+      - name: externaldnspublicconfig
+        configMap:
+          name: external-dns-public-configmap
+      - name: hostcloudconfig
+        hostPath:
+          path: /etc/default/cloud-config.conf
+          type: File
+      containers:
+      - name: external-dns
+        image: registry.opensource.zalan.do/teapot/external-dns:v0.5.1
+        command:
+          - /bin/sh
+          - /external-dns/run-external-dns.sh
+        volumeMounts:
+        - name: externaldnspublicconfig
+          mountPath: /external-dns/run-external-dns.sh
+          subPath: run-external-dns.sh
+        - name: hostcloudconfig
+          mountPath: /etc/default/cloud-config.conf
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 25m
+            memory: 20Mi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-dns-private
+  namespace: kube-system
+  labels:
+    app: external-dns-private
+    version: 0.5.1
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: external-dns-private
+  template:
+    metadata:
+      labels:
+        app: external-dns-private
+        version: 0.5.1
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ''
+    spec:
+      serviceAccountName: external-dns
+      tolerations:
+       - key: node-role.kubernetes.io/master
+         operator: Exists
+      volumes:
+      - name: externaldnsprivateconfig
+        configMap:
+          name: external-dns-private-configmap
+      - name: hostcloudconfig
+        hostPath:
+          path: /etc/default/cloud-config.conf
+          type: File
+      containers:
+      - name: external-dns
+        image: registry.opensource.zalan.do/teapot/external-dns:v0.5.1
+        command:
+          - /bin/sh
+          - /external-dns/run-external-dns.sh
+        volumeMounts:
+        - name: externaldnsprivateconfig
+          mountPath: /external-dns/run-external-dns.sh
+          subPath: run-external-dns.sh
+        - name: hostcloudconfig
+          mountPath: /etc/default/cloud-config.conf
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 25m
+            memory: 20Mi

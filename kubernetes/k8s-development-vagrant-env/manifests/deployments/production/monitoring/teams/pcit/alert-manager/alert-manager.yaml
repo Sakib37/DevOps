@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pcit-alert-manager
+  namespace: pcit-commons
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pcit-alert-manager
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pcit-alert-manager
+  namespace: pcit-commons
+subjects:
+- kind: ServiceAccount
+  name: pcit-alert-manager
+  namespace: pcit-commons
+roleRef:
+  kind: ClusterRole
+  name: pcit-alert-manager
+  apiGroup: "rbac.authorization.k8s.io"
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: pcit-alert-manager
+  namespace: pcit-commons
+  labels:
+    alertmanager: pcit-alert-manager
+spec:
+  replicas: 3
+  version: v0.14.0
+  serviceAccountName: pcit-alert-manager
+  externalUrl: "http://alerts.pcit-commons.teams.kubernetes.prod.compute.k8s.pcit.takeawaydata.io"
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "alertmanager"
+                operator: In
+                values:
+                - pcit-alert-manager
+          topologyKey: "kubernetes.io/hostname"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      cpu: 50m
+      memory: 50Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pcit-alert-manager
+  namespace: pcit-commons
+  labels:
+    alertmanager: pcit-alert-manager
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 9093
+  selector:
+    alertmanager: pcit-alert-manager

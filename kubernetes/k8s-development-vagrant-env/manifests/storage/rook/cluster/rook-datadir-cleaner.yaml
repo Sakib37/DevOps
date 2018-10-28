@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: rook-datadir-cleaner
+  namespace: kube-system
+  labels:
+    app: rook-datadir-cleaner
+spec:
+  selector:
+    matchLabels:
+      app: rook-datadir-cleaner
+  template:
+    metadata:
+      labels:
+        app: rook-datadir-cleaner
+    spec:
+      hostNetwork: true
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: rook-datadir-cleaner
+        image: busybox
+        command:
+        - sh
+        - -c
+        - rm -rf /var/lib/rook && while true; do sleep 86400; done
+        resources:
+          limits:
+            cpu: 20m
+            memory: 50Mi
+          requests:
+            cpu: 20m
+            memory: 50Mi
+        volumeMounts:
+        - name: varlib
+          mountPath:  /var/lib
+        securityContext:
+          privileged: true
+      terminationGracePeriodSeconds: 1
+      volumes:
+      - name: varlib
+        hostPath:
+          path: /var/lib

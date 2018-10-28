@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: default-resource-quotas
+  namespace: default
+  labels:
+    team: pcit
+spec:
+  hard:
+    persistentvolumeclaims: "5"
+    requests.storage: "10Gi"

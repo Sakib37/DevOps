@@ -1,0 +1,2 @@
+export KUBECONFIG=$PWD/conf/kubeconfig/admin.kubeconfig
+export KUBE_EDITOR=vim

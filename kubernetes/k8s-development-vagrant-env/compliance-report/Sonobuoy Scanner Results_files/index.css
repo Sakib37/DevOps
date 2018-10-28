@@ -1,0 +1,273 @@
+
+body {
+  background: var(--white);
+  color: var(--base-font-color);
+  font-family: var(--base-font-family);
+  margin: 0;
+}
+
+h1 {
+  font-size: 45px;
+  font-weight: 500;
+}
+
+h3 {
+  font-size: 25px;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+h4 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 10px 0;
+}
+
+a {
+  color: var(--light-blue);
+  text-decoration: none;
+}
+
+.icon {
+  height: 60px;
+}
+
+.main {
+  align-items: center;
+  background: var(--light-gray);
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  max-width: 100vw;
+  min-height: calc(100vh - 80px);
+}
+
+.scroll-y {
+  overflow-y: scroll;
+  max-height: calc(100vh - 300px);
+}
+
+.content {
+  border-radius: 2px;
+  margin-top: 20px;
+  max-width: 95vw;
+  width: 1300px;
+}
+
+.form-content {
+  background-color: var(--white);
+  border-radius: 2px;
+  padding: 3vw;
+}
+
+.btn {
+  background: var(--gradient-green-left);
+  border: none;
+  border-radius: 2px;
+  color: var(--white);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 300;
+  height: 44px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.btn:hover {
+  background: var(--gradient-green-right);
+}
+
+/* remove blue border on submit buttons */
+input:focus {
+  outline: none;
+}
+
+/* override safari mobile styling on inputs */
+input {
+  -webkit-appearance: none;
+}
+
+/* For the RBAC checkbox */
+input[type="checkbox"] {
+  -webkit-appearance: checkbox;
+}
+
+.info-footer {
+  text-align: center;
+  width: 100%;
+}
+
+.info-text {
+  align-items: center;
+  color: var(--black);
+  padding: 20px;
+  text-align: center;
+}
+
+.landing.steps {
+  border: 2px solid var(--light-gray);
+  border-radius: 2px;
+  padding: 20px;
+}
+
+.intro .cli {
+  border-radius: 2px;
+  margin-top: 5px;
+}
+
+.test-info {
+  align-items: center;
+  display: flex;
+  padding: 20px;
+}
+
+.test-info.failed {
+  background-color: var(--light-gray);
+}
+/* Navbar */
+
+.top-nav {
+  align-items: center;
+  background-color: var(--black);
+  color: white;
+  display: flex;
+  height: 80px;
+  width: 100%;
+}
+
+.top-nav .main-nav {
+  align-items: center;
+  display: flex;
+  font-size: 20px;
+  text-transform: none;
+}
+
+.top-nav .sono-logo {
+  height: 80px;
+  margin-right: 20px;
+}
+
+.top-nav .right {
+  margin-left: auto;
+  margin-right: 3vw;
+  display:flex;
+  align-items: center;
+}
+
+.right .nav-item {
+  margin-left: 15px;
+}
+
+.navbar-icon {
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 40px;
+  margin-left: 3vw;
+  width: 150px;
+}
+
+.nav-item a {
+  color: white;
+  text-transform: uppercase;
+}
+
+.hamburger {
+  background: var(--white);
+  display: block;
+  height: 5px;
+  margin: 8px 0;
+  width: 44px;
+}
+
+.hamburger.one {
+  height: 1px;
+}
+
+.hamburger.two {
+  height: 2px;
+}
+
+.hamburger.three {
+  height: 3px;
+}
+
+.hamburger.four {
+  height: 4px;
+}
+
+.subnav ul {
+  border-radius: 2px;
+  display: none;
+  position: absolute;
+  right: -73px;
+  top: 40px;
+  transform: translate(-50%, 0) rotateX(0deg);
+  transform-origin: 0 0;
+  width: auto;
+}
+
+/* TOS */
+
+.tos {
+  line-height: 22px;
+  padding: 2vw;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.tos p {
+  text-indent: 50px;
+}
+
+.tos p.center {
+  text-align: center;
+}
+
+.tos ol {
+  padding-left: 15px;
+}
+
+.tos ol p {
+  margin-left: -15px;
+}
+
+/* Loading Animation */
+
+.subnav ul li {
+  align-items: center;
+  background: var(--darker-gray);
+  border-bottom: 1px solid var(--light-gray);
+  display: flex;
+  height: 50px;
+  list-style: none;
+  margin: 0;
+  min-width: 50px;
+  padding: 0 20px;
+  transition: all 200ms ease-in-out;
+}
+
+@keyframes subnav-animation {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.subnav:hover ul,
+.subnav ul:hover {
+  display: block;
+  opacity: 1;
+  transition: opacity 500ms;
+  animation: subnav-animation 250ms ease-in-out 1;
+}
+
+/* FAQ */
+.question {
+  border-bottom: 2px solid var(--light-gray);
+  font-size: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 5px;
+}
+
+.answer:not(:last-child) {
+  margin-bottom: 60px;
+}

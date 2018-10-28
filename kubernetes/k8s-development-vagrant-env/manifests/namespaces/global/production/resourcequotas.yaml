@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: production-resource-quotas
+  namespace: production
+  labels:
+    team: pcit
+spec:
+  hard:
+    persistentvolumeclaims: "5"
+    requests.storage: "10Gi"

@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: product-intelligence-prometheus-monitor
+  namespace: product-intelligence-commons
+  labels:
+    team: product-intelligence
+    environment: product-intelligence-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - product-intelligence-commons
+  selector:
+    matchLabels:
+      prometheus: product-intelligence-prometheus
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s

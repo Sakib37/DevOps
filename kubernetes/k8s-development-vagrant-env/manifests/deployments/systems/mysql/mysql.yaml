@@ -1,0 +1,77 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mysql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+    limits:
+      storage: 10Gi
+  storageClassName: rook-block
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql
+spec:
+  type: LoadBalancer
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      protocol: TCP
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 60
+      volumes:
+        - name: mysql
+          persistentVolumeClaim:
+            claimName: mysql
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          args:
+            - "--bind-address=0.0.0.0"
+            - "--ignore-db-dir=lost+found"
+            - "--explicit_defaults_for_timestamp"
+#          securityContext:
+#            runAsUser: 999
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 500m
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: somepassword
+          livenessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 600
+            periodSeconds: 2
+            failureThreshold: 5
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql
+              mountPath: /var/lib/mysql
+

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: rook-system-resource-quotas
+  namespace: rook-system
+  labels:
+    team: pcit
+spec:
+  hard:
+    persistentvolumeclaims: "20"
+    requests.storage: "200Gi"

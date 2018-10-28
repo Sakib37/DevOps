@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-apps-grafana-dashboards
+  namespace: backend-apps-commons
+data:
+  dashboards0.yaml: |+
+    - name: '0'
+      org_id: 1
+      folder: ''
+      type: file
+      options:
+        folder: /grafana-dashboard-definitions/0
+  dashboards1.yaml: |+
+    - name: '1'
+      org_id: 1
+      folder: ''
+      type: file
+      options:
+        folder: /grafana-dashboard-definitions/1
+  dashboards2.yaml: |+
+    - name: '2'
+      org_id: 1
+      folder: ''
+      type: file
+      options:
+        folder: /grafana-dashboard-definitions/2
+  dashboards3.yaml: |+
+    - name: '3'
+      org_id: 1
+      folder: ''
+      type: file
+      options:
+        folder: /grafana-dashboard-definitions/3

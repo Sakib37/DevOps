@@ -1,0 +1,95 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgresql
+  labels:
+    volume: postgresql-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  nfs:
+    server: 10.12.1.55
+    path: "/mnt/tank2/bi-jenkins"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgresql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+    limits:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      volume: postgresql-volume
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgresql
+spec:
+  type: ClusterIP
+  selector:
+    app: postgresql
+  ports:
+    - port: 3306
+      protocol: TCP
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: postgresql
+  labels:
+    app: postgresql
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: postgresql
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      terminationGracePeriodSeconds: 60
+      volumes:
+        - name: postgresql
+          persistentVolumeClaim:
+            claimName: postgresql
+      containers:
+        - name: postgresql
+          image: postgres:10.0
+#          args:
+#            - "--bind-address=0.0.0.0"
+#            - "--ignore-db-dir=*"
+#            - "--explicit_defaults_for_timestamp"
+#          securityContext:
+#            runAsUser: 999
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 1
+          env:
+            - name: POSTGRES_PASSWORD
+              value: somepassword
+            - name: PGDATA
+              value: /var/lib/postgresql/data
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 600
+            periodSeconds: 2
+            failureThreshold: 5
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: postgresql
+              mountPath: /var/lib/postgresql/data
+              subPath: kube-postgresql
+

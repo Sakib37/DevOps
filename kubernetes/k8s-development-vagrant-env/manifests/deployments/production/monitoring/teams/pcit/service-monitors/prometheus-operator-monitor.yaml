@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prometheus-operator-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      k8s-app: prometheus-operator
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s

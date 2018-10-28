@@ -1,0 +1,105 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: product-intelligence-prometheus
+  namespace: product-intelligence-commons
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: product-intelligence-prometheus
+rules:
+- apiGroups: [""]
+  resources: ["nodes","services","endpoints","pods"]
+  verbs: ["get", "watch", "list"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get"]
+- nonResourceURLs: ["nodes/metrics", "/metrics"]
+  verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: product-intelligence-prometheus
+  namespace: product-intelligence-commons
+subjects:
+- kind: ServiceAccount
+  name: product-intelligence-prometheus
+  namespace: product-intelligence-commons
+roleRef:
+  kind: ClusterRole
+  name: product-intelligence-prometheus
+  apiGroup: "rbac.authorization.k8s.io"
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: product-intelligence-prometheus
+  namespace: product-intelligence-commons
+  labels:
+    prometheus: product-intelligence-prometheus
+spec:
+  replicas: 1
+  serviceAccountName: product-intelligence-prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      team: product-intelligence
+  alerting:
+    alertmanagers:
+    - namespace: product-intelligence-commons
+      name: product-intelligence-alert-manager
+      port: http
+  externalUrl: "http://prometheus.product-intelligence-commons.teams.kubernetes.prod.compute.k8s.pcit.takeawaydata.io"
+  routePrefix: "/"
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "prometheus"
+                operator: In
+                values:
+                - product-intelligence-prometheus
+          topologyKey: "kubernetes.io/hostname"
+  ruleSelector:
+    matchLabels:
+      role: prometheus-alerting-rules
+      prometheus: product-intelligence-prometheus
+  resources:
+    requests:
+      memory: 400Mi
+  retention: 720h
+  storageSpec:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: rook-block
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-intelligence-prometheus
+  namespace: product-intelligence-commons
+  labels:
+    prometheus: product-intelligence-prometheus
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 9090
+  selector:
+    prometheus: product-intelligence-prometheus

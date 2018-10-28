@@ -1,0 +1,194 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-apps-grafana
+  namespace: backend-apps-commons
+  labels:
+    app: backend-apps-grafana
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+    limits:
+      storage: 5Gi
+  storageClassName: rook-block
+
+---
+
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-apps-grafana
+  namespace: backend-apps-commons
+  labels:
+    app: backend-apps-grafana
+spec:
+  minReplicas: 1
+  maxReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-apps-grafana
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 90
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: 90
+
+---
+
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: backend-apps-grafana
+  namespace: backend-apps-commons
+
+---
+
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: backend-apps-grafana
+#  namespace: backend-apps-commons
+#  labels:
+#    app: backend-apps-grafana
+#  annotations:
+#    sidecar.istio.io/inject: "false"
+#spec:
+#  selector:
+#    matchLabels:
+#      app: backend-apps-grafana
+#  template:
+#    metadata:
+#      labels:
+#        app: backend-apps-grafana
+#    spec:
+#      containers:
+#      - name: backend-apps-grafana
+#        image: gcr.io/google_containers/heapster-grafana-amd64:v4.4.3
+#        ports:
+#        - containerPort: 3000
+#          protocol: TCP
+#        volumeMounts:
+#        - mountPath: /etc/ssl/certs
+#          name: ca-certificates
+#          readOnly: true
+#        - mountPath: /var
+#          name: backend-apps-grafana-storage
+#        env:
+#        - name: INFLUXDB_HOST
+#          value: backend-apps-commons-influxdb
+#        - name: GF_SERVER_HTTP_PORT
+#          value: "3000"
+#        - name: GF_AUTH_BASIC_ENABLED
+#          value: "false"
+#        - name: GF_AUTH_ANONYMOUS_ENABLED
+#          value: "true"
+#        - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+#          value: Admin
+#        - name: GF_SERVER_ROOT_URL
+#          value: /
+#      volumes:
+#      - name: ca-certificates
+#        hostPath:
+#          path: /etc/ssl/certs
+#      - name: backend-apps-grafana-storage
+#        persistentVolumeClaim:
+#          claimName: backend-apps-grafana
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-apps-grafana
+  namespace: backend-apps-commons
+  labels:
+    app: backend-apps-grafana
+spec:
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  selector:
+    app: backend-apps-grafana
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-apps-grafana
+  namespace: backend-apps-commons
+  labels:
+    app: backend-apps-grafana
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  selector:
+    matchLabels:
+      app: backend-apps-grafana
+  template:
+    metadata:
+      labels:
+        app: backend-apps-grafana
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+      containers:
+      - name: grafana
+        image: quay.io/coreos/monitoring-grafana:5.0.0
+        volumeMounts:
+        - name: grafana-storage
+          mountPath: /data
+        - name: grafana-datasources
+          mountPath: /grafana/conf/provisioning/datasources
+        - name: grafana-dashboards
+          mountPath: /grafana/conf/provisioning/dashboards
+        - name: grafana-dashboard-definitions-0
+          mountPath: /grafana-dashboard-definitions/0
+        - name: grafana-dashboard-definitions-1
+          mountPath: /grafana-dashboard-definitions/1
+        - name: grafana-dashboard-definitions-2
+          mountPath: /grafana-dashboard-definitions/2
+        - name: grafana-dashboard-definitions-3
+          mountPath: /grafana-dashboard-definitions/3
+        ports:
+        - name: web
+          containerPort: 3000
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 100m
+          limits:
+            memory: 200Mi
+            cpu: 200m
+      volumes:
+      - name: grafana-storage
+        emptyDir:
+      - name: grafana-datasources
+        configMap:
+          name: backend-apps-grafana-datasources
+      - name: grafana-dashboards
+        configMap:
+          name: backend-apps-grafana-dashboards
+      - name: grafana-dashboard-definitions-0
+        configMap:
+          name: backend-apps-grafana-dashboard-definitions-0
+      - name: grafana-dashboard-definitions-1
+        configMap:
+          name: backend-apps-grafana-dashboard-definitions-1
+      - name: grafana-dashboard-definitions-2
+        configMap:
+          name: backend-apps-grafana-dashboard-definitions-2
+      - name: grafana-dashboard-definitions-3
+        configMap:
+          name: backend-apps-grafana-dashboard-definitions-3

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-external-dns-test
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: nginx-external-dns-test
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx-external-dns-test
+    spec:
+      containers:
+      - name: nginx-external-dns-test
+        image: nginx
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-external-dns-test
+  namespace: kube-system
+  labels:
+    app: nginx-external-dns-test
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    protocol: TCP
+  selector:
+    app: nginx-external-dns-test
+
+
+# kubectl create deployment nginx --image=nginx
+# kubectl expose deployment nginx --port=80 --target-port=80 --type=ClusterIP
+# kubectl annotate service nginx  "external-dns.alpha.kubernetes.io/dns.public.class=public"
+# kubectl annotate service nginx  "external-dns.alpha.kubernetes.io/dns.private.class=private"

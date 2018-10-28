@@ -1,0 +1,582 @@
+# created by:   Mohammad Badruzzaman < shakib37@gmail.com >
+# since:        17.01.2018
+# description:  Kubernetes Development Cluster
+
+require 'json'
+require 'open-uri'
+require 'time'
+require 'socket'
+
+
+file = File.read('conf/config.json')
+conf = JSON.parse(file)
+
+
+# Install vagrant plugin dependencies for the Kubernetes Platform Cluster
+required_plugins = %w( vagrant-hosts vagrant-hostmanager )
+required_plugins.each do |plugin|
+  system "vagrant plugin Install #{plugin}" unless Vagrant.has_plugin? plugin
+end
+
+
+# The following function determines the ip address of the machine from which the cluster is spawn up
+def self.local_ip
+  orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true
+  UDPSocket.open do |s|
+    s.connect '64.233.187.99', 1
+    s.addr.last
+  end
+ensure
+  Socket.do_not_reverse_lookup = orig
+end
+
+
+VAGRANTFILE_API_VERSION = "2"
+
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # Node counter
+  totalNodes = 0
+
+  # Number of Kubernetes masters to provision
+  numMasters = conf['masters']['count']
+
+  # Number of Kubernetes workers to provision
+  numWorkers = conf['workers']['count']
+
+  # IP Address prefix
+  ip_prefix = conf['ip_prefix']
+
+  # IP address of a gateway into the environment. This is by default the IP
+  # of the machine from which the environment is setup
+  gatewayIp = local_ip
+
+  gatewayHostname = Socket.gethostname
+
+  # Network interface on the host machine on which vm interfaces should be bridged to
+  bridgeInterface = conf['host_interface']
+
+  # Define the details of the base box to be used for all nodes in the landscape (CentOS 6.5 base box)
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.box_version = ">20180503.0.0"
+
+  # Define network bridge for the network interfaces on all nodes
+  #config.vm.network "public_network", bridge:'eth0'
+
+  # Configure DNS resolution via /etc/hosts file using the vagrant hostmanager plugin configuration
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = false
+
+  # Mount the tls folder into all VMs
+  config.vm.synced_folder conf['tls_host_folder'], conf['tls_guest_folder']
+
+  # Configure Master nodes
+  1.upto(numMasters) do |num|
+
+    k8sMasterNodeName = "k8s-server-" + num.to_s
+    config.vm.define k8sMasterNodeName do |k8s_master_node|
+
+      vm_ip = ip_prefix + totalNodes.to_s
+
+      # set system limits
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/system/configure-file-limits.sh"
+        s.args = [vm_ip]
+      end
+
+      # set system environments
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/system/k8s-system-environment.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+
+      # Install ntpd
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/ntpd/install-ntpd.sh"
+        s.args = [vm_ip]
+      end
+
+      # Install Golang
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/golang/install-golang.sh"
+        s.args = [vm_ip]
+      end
+
+      # Install cfssl
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/install-cfssl.sh"
+        s.args = [vm_ip]
+      end
+
+      # generate ca certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-ca-certs.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # generate etcd peer and client certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-etcd-certs.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # generate kubernetes admin operator client certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-admin-ops-client.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # generate kubernetes aggregation proxy client certificates
+      # please see: https://github.com/kubernetes-incubator/apiserver-builder/blob/master/docs/concepts/auth.md
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-aggregator-proxy-client.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # generate kubernetes controller manager service accounts client certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-service-account-client.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # generate portworx etcd client certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-portworx-certs-client.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # generate kubernetes api server certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kubeapi-server.sh"
+        s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
+      end
+
+      # generate kubernetes controller manager client certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kube-controller-manager-client.sh"
+        s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
+      end
+
+      # generate kubernetes scheduler client certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kube-scheduler-client.sh"
+        s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
+      end
+
+      # generate kubelet client certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kubelet-client.sh"
+        s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
+      end
+
+      # generate kube-proxy client certificates
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kubeproxy-client.sh"
+        s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
+      end
+
+      # download etcd
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/etcd/download-etcd.sh"
+        s.args = [vm_ip]
+      end
+
+      # configure etcd
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/etcd/setup-etcd.sh"
+        s.args = [vm_ip, numMasters]
+      end
+
+      ## download kubernetes
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/download-kubernetes.sh"
+        s.args = [vm_ip]
+      end
+
+      # generate kubernetes api server data encryption config
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/encryption/setup-apiserver-encryption-config.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # kubelet setup depends on docker and cni configuation
+      # Install docker engine
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/docker/install-docker.sh"
+        s.args = [vm_ip]
+      end
+
+
+      # Load docker images
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/docker/load-docker-images.sh"
+      end
+
+
+      # Install cni
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cni/install-cni.sh"
+        s.args = ["10.32.#{num}.0/24"]
+      end
+
+      ## Install runc
+      #k8s_master_node.vm.provision "shell" do |s|
+      #  s.path = "bootstrap/runc/install-runc.sh"
+      #  s.args = [vm_ip]
+      #end
+
+      # create admin kubeconfig
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/kubeconfig/create-admin-kubeconfig.sh"
+        s.args = [conf['kubeconfig_folder'], conf['tls_guest_folder'], gatewayHostname, conf['name']]
+      end
+
+      # create kube-controller-manager kubeconfig
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/kubeconfig/create-kube-controller-manager-kubeconfig.sh"
+        s.args = [conf['kubeconfig_folder'], conf['tls_guest_folder'], gatewayIp, conf['name']]
+      end
+
+      # create kube-scheduler kubeconfig
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/kubeconfig/create-kube-scheduler-kubeconfig.sh"
+        s.args = [conf['kubeconfig_folder'], conf['tls_guest_folder'], gatewayIp, conf['name']]
+      end
+
+      # create kubelet kubeconfig
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/kubeconfig/create-kubelet-kubeconfig.sh"
+        s.args = [conf['kubeconfig_folder'], conf['tls_guest_folder'], gatewayIp, conf['name']]
+      end
+
+      # create kube-proxy kubeconfig
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/kubeconfig/create-kube-proxy-kubeconfig.sh"
+        s.args = [conf['kubeconfig_folder'], conf['tls_guest_folder'], gatewayIp, conf['name']]
+      end
+
+      # configure and start kubernetes apiserver
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/master/setup-kube-apiserver.sh"
+        s.args = [vm_ip, numMasters, conf['kubernetes_services_ip_range'], conf['kubernetes_service_node_port_range'], conf['cloud_provider']]
+      end
+
+      # configure and start kubernetes controller manager
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/master/setup-kube-controller-manager.sh"
+        s.args = [conf['name'], conf['cluster_cidr'], conf['kubernetes_services_ip_range'], conf['cloud_provider']]
+      end
+
+      # configure and start kubernetes scheduler
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/master/setup-kube-scheduler.sh"
+        s.args = [vm_ip]
+      end
+
+      # configure and start kubernetes kubelet
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/master/setup-kubelet.sh"
+        s.args = ["10.32.#{num}.0/24", conf['cloud_provider'], conf['kubernetes_cluster_dns']]
+      end
+
+      # configure and start kubernetes kube proxy
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/master/setup-kube-proxy.sh"
+        s.args = ["10.32.#{num}.0/24"]
+      end
+
+      # Install ceph tools
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/ceph/install-ceph-tools.sh"
+        s.args = [vm_ip]
+      end
+
+      ## Install weave net
+      #k8s_master_node.vm.provision "shell" do |s|
+      #  s.path = "bootstrap/weavenet/install-weavenet.sh"
+      #  s.args = ["k8s-server-1"]
+      #end
+
+      ## # Install weave scope
+      ## k8s_master_node.vm.provision "shell" do |s|
+      ##   s.path = "bootstrap/weavescope/install-weavescope.sh"
+      ##   s.args = [vm_ip]
+      ## end
+
+      k8s_master_node.vm.hostname = "k8s-server-" + num.to_s
+      k8s_master_node.vm.network "private_network", ip: vm_ip, :netmask => "255.255.255.0"
+      k8s_master_node.vm.network "public_network", bridge: bridgeInterface
+
+      # configure dns port forwarding
+      k8s_master_node.vm.network :forwarded_port, guest: 53, host: 53, auto_correct: true
+      k8s_master_node.vm.network :forwarded_port, guest: 53, host: 53, auto_correct: true, protocol: 'udp'
+
+      # configure etcd port forwarding
+
+      k8s_master_node.vm.network :forwarded_port, guest: 2379, host: 2379, auto_correct: true
+      k8s_master_node.vm.network :forwarded_port, guest: 2380, host: 2380, auto_correct: true
+
+      # configure kubernetes server port forwarding
+      # https://kubernetes.io/docs/setup/independent/Install-kubeadm/#check-required-ports
+
+      k8s_master_node.vm.network :forwarded_port, guest: 6443, host: 6443, auto_correct: true
+      k8s_master_node.vm.network :forwarded_port, guest: 10250, host: 10250, auto_correct: true
+      k8s_master_node.vm.network :forwarded_port, guest: 10251, host: 10251, auto_correct: true
+      k8s_master_node.vm.network :forwarded_port, guest: 10252, host: 10252, auto_correct: true
+      k8s_master_node.vm.network :forwarded_port, guest: 10253, host: 10253, auto_correct: true
+
+      # configure kubernetes node port forwarding
+      # https://kubernetes.io/docs/setup/independent/Install-kubeadm/#check-required-ports
+
+      #k8s_master_node.vm.network :forwarded_port, guest: 10250, host: 10250, auto_correct: true
+      k8s_master_node.vm.network :forwarded_port, guest: 10255, host: 10255, auto_correct: true
+
+      # configure weave net port forwarding
+
+      # k8s_master_node.vm.network :forwarded_port, guest: 6782, host: 6782, auto_correct: true
+      # k8s_master_node.vm.network :forwarded_port, guest: 6783, host: 6783, auto_correct: true
+      # k8s_master_node.vm.network :forwarded_port, guest: 6784, host: 6784, auto_correct: true
+      # k8s_master_node.vm.network :forwarded_port, guest: 6783, host: 6783, auto_correct: true, protocol: 'udp'
+      # k8s_master_node.vm.network :forwarded_port, guest: 6784, host: 6784, auto_correct: true, protocol: 'udp'
+
+      # configure weave scope port forwarding
+
+      # k8s_master_node.vm.network :forwarded_port, guest: 4040, host: 4040, auto_correct: true
+
+      # configure the hostupdater alternative names
+      #k8s_master_node.hostmanager.aliases = %w(server.k8s.dev.dia.takeaway.com)
+
+
+      k8s_master_node.vm.provider "virtualbox" do |node|
+        node.name = "k8s-server-" + num.to_s
+        node.customize ["modifyvm", :id, "--memory", conf['masters']['memory']]
+        node.customize ["modifyvm", :id, "--cpus", conf['masters']['cpus']]
+        node.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ] # disable guest os log files
+        #node.linked_clone = true
+      end
+      totalNodes += 1
+    end
+  end
+
+
+  # Configure Worker nodes
+  1.upto(numWorkers) do |num|
+
+    k8sWorkerNodeName = "k8s-node-" + num.to_s
+    config.vm.define k8sWorkerNodeName do |k8s_worker_node|
+
+      vm_ip = ip_prefix + totalNodes.to_s
+
+      # set system limits
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/system/configure-file-limits.sh"
+        s.args = [vm_ip]
+      end
+
+      # set system environments
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/system/k8s-system-environment.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # mount external virtualbox vdi disks
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/storage/format-disks.sh"
+        s.args = [vm_ip]
+      end
+
+      # Install ntpd
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/ntpd/install-ntpd.sh"
+        s.args = [vm_ip]
+      end
+
+      # Install Golang
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/golang/install-golang.sh"
+        s.args = [vm_ip]
+      end
+
+      # Install cfssl
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/install-cfssl.sh"
+        s.args = [vm_ip]
+      end
+
+      # generate ca certificates
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-ca-certs.sh"
+        s.args = [conf['tls_guest_folder']]
+      end
+
+      # generate kubelet client certificates
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kubelet-client.sh"
+        s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
+      end
+
+      # generate kube-proxy client certificates
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kubeproxy-client.sh"
+        s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
+      end
+
+      # download kubernetes
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/download-kubernetes.sh"
+        s.args = [vm_ip]
+      end
+
+      # create kubelet kubeconfig
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/kubeconfig/create-kubelet-kubeconfig.sh"
+        s.args = [conf['kubeconfig_folder'], conf['tls_guest_folder'], gatewayIp, conf['name']]
+      end
+
+      # create kube-proxy kubeconfig
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/kubeconfig/create-kube-proxy-kubeconfig.sh"
+        s.args = [conf['kubeconfig_folder'], conf['tls_guest_folder'], gatewayIp, conf['name']]
+      end
+
+      # # prepare portworx configuration for storage subsystem
+      # k8s_worker_node.vm.provision "shell" do |s|
+      #   s.path = "bootstrap/portworx/configure-portworx.sh"
+      #   s.args = [vm_ip]
+      # end
+
+      # Install docker engine
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/docker/install-docker.sh"
+        s.args = [vm_ip]
+      end
+
+
+      # Load docker images
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/docker/load-docker-images.sh"
+      end
+
+
+      # Install runc
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/runc/install-runc.sh"
+        s.args = [vm_ip]
+      end
+
+      # Install cni
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/cni/install-cni.sh"
+        s.args = ["10.32.#{num}.0/24"]
+      end
+
+      # Install ceph tools
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/ceph/install-ceph-tools.sh"
+        s.args = [vm_ip]
+      end
+
+      # # Install cri-containerd
+      # k8s_worker_node.vm.provision "shell" do |s|
+      #   s.path = "bootstrap/cri-containerd/install-cri-containerd.sh"
+      #   s.args = [vm_ip]
+      # end
+
+
+      # configure and start kubernetes kubelet
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/worker/setup-kubelet.sh"
+        s.args = ["10.32.#{num}.0/24", conf['cloud_provider'], conf['kubernetes_cluster_dns']]
+      end
+
+      # configure and start kubernetes kube proxy
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/kubernetes/worker/setup-kube-proxy.sh"
+        s.args = ["10.32.#{num}.0/24"]
+      end
+
+      k8s_worker_node.vm.hostname = "k8s-node-" + num.to_s
+      k8s_worker_node.vm.network "private_network", ip: vm_ip, :netmask => "255.255.255.0"
+      k8s_worker_node.vm.network "public_network", bridge: bridgeInterface
+
+      # configure dns port forwarding
+      k8s_worker_node.vm.network :forwarded_port, guest: 53, host: 53, auto_correct: true
+      k8s_worker_node.vm.network :forwarded_port, guest: 53, host: 53, auto_correct: true, protocol: 'udp'
+
+      # configure kubernetes node port forwarding
+      # https://kubernetes.io/docs/setup/independent/Install-kubeadm/#check-required-ports
+
+      k8s_worker_node.vm.network :forwarded_port, guest: 10250, host: 10250, auto_correct: true
+      k8s_worker_node.vm.network :forwarded_port, guest: 10255, host: 10255, auto_correct: true
+
+      # configure weave net port forwarding
+
+      # k8s_worker_node.vm.network :forwarded_port, guest: 6782, host: 6782, auto_correct: true
+      # k8s_worker_node.vm.network :forwarded_port, guest: 6783, host: 6783, auto_correct: true
+      # k8s_worker_node.vm.network :forwarded_port, guest: 6784, host: 6784, auto_correct: true
+      # k8s_worker_node.vm.network :forwarded_port, guest: 6783, host: 6783, auto_correct: true, protocol: 'udp'
+      # k8s_worker_node.vm.network :forwarded_port, guest: 6784, host: 6784, auto_correct: true, protocol: 'udp'
+
+      # configure weave scope port forwarding
+      #k8s_worker_node.vm.network :forwarded_port, guest: 4040, host: 4040, auto_correct: true
+
+      # configure cri-o port forwarding
+      #k8s_worker_node.vm.network :forwarded_port, guest: 10010, host: 10010, auto_correct: true
+
+      # configure the hostupdater alternative names
+      #k8s_worker_node.hostmanager.aliases = %w("node.k8s.dev.dia.takeaway.com")
+
+      k8s_worker_node.vm.provider "virtualbox" do |node|
+        node.name = "k8s-node-" + num.to_s
+        node.customize ["modifyvm", :id, "--memory", conf['workers']['memory']]
+        node.customize ["modifyvm", :id, "--cpus", conf['workers']['cpus']]
+        node.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ] # disable guest os log files
+        #node.linked_clone = true
+
+        disk_path_1 = "./disks/" + node.name + "/disk1.vdi"
+        disk_path_2 = "./disks/" + node.name + "/disk2.vdi"
+        unless File.exists?(disk_path_1) and File.exists?(disk_path_2)
+          node.customize [
+                          'createmedium', 'disk',
+                          '--filename', disk_path_1,
+                          '--format', 'VDI',
+                          '--size', conf['workers']['gb_per_disk'] * 1024
+                      ]
+
+          node.customize [
+                             'createmedium', 'disk',
+                             '--filename', disk_path_2,
+                             '--format', 'VDI',
+                             '--size', conf['workers']['gb_per_disk'] * 1024
+                         ]
+        end
+
+        node.customize [
+                        'storageattach', :id,
+                        '--storagectl', 'SCSI',
+                        '--port', 2,
+                        '--device', 0,
+                        '--type', 'hdd',
+                        '--medium', disk_path_1
+                    ]
+
+        node.customize [
+                           'storageattach', :id,
+                           '--storagectl', 'SCSI',
+                           '--port', 3,
+                           '--device', 0,
+                           '--type', 'hdd',
+                           '--medium', disk_path_2
+                       ]
+      end
+
+      totalNodes += 1
+    end
+  end
+end

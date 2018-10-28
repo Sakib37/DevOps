@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pcit-cert-manager-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - security-system
+  selector:
+    matchLabels:
+      app: cert-manager
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 60s

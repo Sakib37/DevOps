@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pcit-grafana-datasources
+  namespace: pcit-commons
+data:
+  prometheus.yaml: |+
+    datasources:
+     - name: prometheus
+       type: prometheus
+       access: proxy
+       org_id: 1
+       url: http://pcit-prometheus.pcit-commons:9090
+       version: 1
+       editable: false
+     - name: influxdb
+       type: influxdb
+       access: proxy
+       org_id: 1
+       url: http://monitoring-influxdb.kube-system:8086
+       version: 1
+       editable: false
+       database: k8s

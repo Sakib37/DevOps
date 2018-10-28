@@ -1,0 +1,12 @@
+apiVersion: config.istio.io/v1alpha2
+kind: EgressRule
+metadata:
+  name: http-all-egress-rule
+spec:
+  destination:
+    service: "*"
+  ports:
+    - port: 80
+      protocol: http
+    - port: 443
+      protocol: http

@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: cnn-proxy
+  labels:
+    app: cnn-proxy
+    proxy-target: www.cnn.com
+spec:
+  type: ExternalName
+  externalName: "www.cnn.com"

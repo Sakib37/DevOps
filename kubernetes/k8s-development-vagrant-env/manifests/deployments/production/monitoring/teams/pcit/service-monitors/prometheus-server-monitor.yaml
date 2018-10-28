@@ -1,0 +1,63 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pcit-prometheus-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - pcit-commons
+  selector:
+    matchLabels:
+      prometheus: pcit-prometheus
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend-apps-prometheus-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - backend-apps-commons
+  selector:
+    matchLabels:
+      prometheus: backend-apps-prometheus
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: product-intelligence-prometheus-monitor
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - product-intelligence-commons
+  selector:
+    matchLabels:
+      prometheus: product-intelligence-prometheus
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s

@@ -1,0 +1,43 @@
+{
+  "name": "k8s-development-cluster",
+  "cloud_provider": "",
+  "auth": {
+    "count": 0,
+    "cpus": 1,
+    "memory": 1024,
+    "num_extra_disks": 0,
+    "gb_per_disk": 0,
+    "ip_prefix": "10.0.1.10"
+  },
+  "masters": {
+    "count": 1,
+    "cpus": 2,
+    "memory": 2048,
+    "num_extra_disks": 0,
+    "gb_per_disk": 0,
+    "ip_prefix": "10.0.0.10"
+  },
+  "workers": {
+    "count": 3,
+    "cpus": 2,
+    "memory": 2048,
+    "num_extra_disks": 2,
+    "gb_per_disk": 50,
+    "ip_prefix": "10.0.0.10"
+  },
+  "ip_prefix": "10.0.0.10",
+  "cluster_cidr": "10.32.0.0/16",
+  "kubernetes_services_ip_range": "10.77.0.0/16",
+  "kubernetes_service_node_port_range": "30000-32767",
+  "kubernetes_cluster_dns": "10.77.0.10",
+  "host_interface": "wlp1s0",
+  "tls_host_folder": "tls/",
+  "tls_guest_folder": "/etc/tls/k8s",
+  "kubeconfig_folder": "/vagrant/conf/kubeconfig",
+  "etcd_discovery_service": "https://discovery.etcd.io/new?size=",
+  "enable_pod_security_policies": "false",
+  "enable_network_policies": "false",
+  "enable_service_mesh": "false",
+  "enable_rook_storage": "true",
+  "enable_sample_apps": "false"
+}

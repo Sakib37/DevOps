@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rook-firewall
+  namespace: rook
+  labels:
+    team: pcit
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          env: monitoring-core
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          env: kube-system
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          env: rook-system
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          env: kube-system
+    ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+

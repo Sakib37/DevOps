@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend-apps-alert-manager-monitor
+  namespace: backend-apps-commons
+  labels:
+    team: backend-apps
+    environment: backend-apps-commons
+spec:
+  namespaceSelector:
+    matchNames:
+      - backend-apps-commons
+  selector:
+    matchLabels:
+      alertmanager: backend-apps-alert-manager
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: security-system-limit-ranges
+  namespace: security-system
+  labels:
+    team: pcit
+spec:
+  limits:
+  - type: PersistentVolumeClaim
+    max:
+      storage: 5Gi
+    min:
+      storage: 1Gi

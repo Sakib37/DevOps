@@ -1,0 +1,775 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="Sonobuoy%20Scanner%20Results_files/variables.css">
+    <link rel="stylesheet" type="text/css" href="Sonobuoy%20Scanner%20Results_files/index.css">
+    <link rel="stylesheet" type="text/css" href="Sonobuoy%20Scanner%20Results_files/randomColor.css">
+    <link rel="stylesheet" type="text/css" href="Sonobuoy%20Scanner%20Results_files/install.css">
+    <link rel="stylesheet" type="text/css" href="Sonobuoy%20Scanner%20Results_files/results.css">
+    <link rel="icon" type="image/png" href="https://scanner.heptio.com/static/assets/heptio-favicon.png">
+    <title>
+  Sonobuoy Scanner Results
+</title>
+  </head>
+  <body>
+    <nav role="navigation" class="top-nav">
+        <div class="left nav-item">
+          <a class="main-nav" href="https://scanner.heptio.com/">
+            <img class="sono-logo" src="Sonobuoy%20Scanner%20Results_files/sonobuoy-transparent-white.png">
+            Heptio <br>Sonobuoy<br> Scanner
+          </a>
+        </div>
+      <div class="right">
+        
+  <div class="nav-item">
+    <a class="panel-trigger" href="javascript:void(0);">Scan Again</a>
+  </div>
+
+        <div class=" nav-item subnav">
+          <span class="nav-burger">
+            <span class="hamburger one"></span>
+            <span class="hamburger two"></span>
+            <span class="hamburger three"></span>
+            <span class="hamburger four"></span>
+            <span class="hamburger"></span>
+          </span>
+          <ul>
+            <li>
+              <a href="https://heptio.com/contact" target="_blank">Contact Us</a>
+            </li>
+            <li>
+              <a href="https://scanner.heptio.com/tos/" target="_blank">Terms of Service</a>
+            </li>
+            <li>
+              <a href="https://scanner.heptio.com/faq/">FAQ</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+  <div class="main light no-bg fullpage">
+    <div class="content results">
+      <div class="core-content">
+        <div class="brand-header">
+          <div class="left-flex">
+            <h2>Sonobuoy Scan Results</h2>
+            <p>
+              
+              Sonobuoy ran the following tests against your cluster. All conformance tests passed.
+              
+            </p>
+            <p><strong>To keep the report, bookmark this URL.</strong></p>
+          </div>
+          <div class="right-flex">
+            <h2 class="light">Run Date: <strong class="right">2017-10-24</strong></h2>
+            
+            <p>Time tests took to run: <strong class="right">00:52:32</strong></p>
+            
+            <hr>
+            <p>Kubernetes Version: <strong class="right">v1.8.1</strong></p>
+            <p>Total Nodes: <strong class="right">3</strong></p>
+            <p class="info-warning">This report is automatically deleted on 2017-12-23</p>
+            <form action="delete/" method="post">
+              <input class="btn warning" value="Delete now" type="submit">
+            </form>
+          </div>
+        </div>
+        <div class="meta-results">
+        
+          <div class="badge passed">✔</div>
+        
+          <div class="header-info">
+            <h2 class="light">Conformance Results</h2>
+            <h4>Tests Run: <strong>124</strong></h4>
+            <h4>Total Failures: <strong>0</strong></h4>
+            <p><a href="https://scanner.heptio.com/ab2baccb2459b4a0cbbbf97d0ed28be3/diagnostics/download/">Download test report</a></p>
+          </div>
+        </div>
+        <div class="results-content">
+        
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (root,0644,tmpfs) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should provide container's cpu limit [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should set mode on item file [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (non-root,0644,tmpfs) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Probing container should have monotonically increasing restart count [Conformance] [Slow]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes volume on default medium should have the correct mode [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] HostPath should give a volume the correct mode [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable from pods in volume with mappings and Item mode set[Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable in multiple volumes in the same pod [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets should be consumable from pods in env vars [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Networking Granular Checks: Pods should function for intra-pod communication: http [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] DNS should provide DNS for the cluster [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-scheduling] SchedulerPredicates [Serial] validates that NodeSelector is respected if not matching [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should update annotations on modification [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should set DefaultMode on files [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (root,0777,tmpfs) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected updates should be reflected in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume with mappings as non-root [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Pods should be updated [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets should be consumable from pods in volume with mappings and Item Mode set [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable from pods in volume as non-root [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should project all components that make up the projection API [Conformance] [sig-storage] [Projection]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (non-root,0666,tmpfs) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-apps] ReplicaSet should serve a basic image on each replica with a public image [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-auth] ServiceAccounts should mount an API token into pods [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume with mappings and Item mode set[Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable in multiple volumes in the same pod [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume as non-root [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (non-root,0777,default) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume with mappings and Item Mode set [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (non-root,0666,default) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Probing container should *not* be restarted with a /healthz http liveness probe [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume with mappings [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-scheduling] SchedulerPredicates [Serial] validates resource limits of pods that are allowed to run [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (root,0666,tmpfs) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-auth] ServiceAccounts should allow opting out of API token automount [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Networking Granular Checks: Pods should function for node-pod communication: udp [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets should be consumable in multiple volumes in a pod [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Proxy version v1 should proxy logs on node using proxy subresource [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should provide container's cpu request [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable via environment variable [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should update annotations on modification [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Pods should get a host IP [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API should provide container's limits.cpu/memory and requests.cpu/memory as env vars [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Variable Expansion should allow substituting values in a container's args [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume with defaultMode set [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable via the environment [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap updates should be reflected in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume with defaultMode set [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Pods should be submitted and removed [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets should be consumable from
+ pods in volume as non-root with defaultMode and fsGroup set 
+[Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable in multiple volumes in a pod [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable from pods in volume with mappings [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable from pods in volume with defaultMode set [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should provide container's cpu limit [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Probing container should *not* be restarted with a exec "cat /tmp/health" liveness probe [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Probing container should be restarted with a exec "cat /tmp/health" liveness probe [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (non-root,0777,tmpfs) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Service endpoints latency should not be very high [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable 
+from pods in volume as non-root with defaultMode and fsGroup set 
+[Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets should be consumable from pods in volume with defaultMode set [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable from pods in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Pods Extended [k8s.io] Pods Set QOS Class should be submitted and removed [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (root,0777,default) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Probing container with readiness probe that fails should never be ready and never restart [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (root,0644,default) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] PreStop should call prestop when killing a pod [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Proxy version v1 should proxy logs on node [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume with mappings [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API should provide pod and host IP as an env var [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-api-machinery] 
+CustomResourceDefinition resources Simple CustomResourceDefinition 
+creating/deleting custom resource definition objects works [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should update labels on modification [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should set mode on item file [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should update labels on modification [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should provide container's memory limit [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should 
+provide node allocatable (memory) as default memory limit if the limit 
+is not set [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected optional updates should be reflected in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Proxy version v1 should proxy through a service and a pod [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Networking Granular Checks: Pods should function for node-pod communication: http [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap optional updates should be reflected in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should provide node 
+allocatable (cpu) as default cpu limit if the limit is not set 
+[Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Services should provide secure master service [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Pods should contain environment variables for services [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should provide container's memory request [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected optional updates should be reflected in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should provide container's memory request [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Docker Containers should be able to override the image's default command and arguments [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Docker Containers should be able to override the image's default commmand (docker entrypoint) [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Pods should allow activeDeadlineSeconds to be updated [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Services should serve multiport endpoints from pods [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should be consumable from pods in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets optional updates should be reflected in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Docker Containers should use the image defaults if command and args are blank [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should provide container's memory limit [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Docker Containers should be able to override the image's default arguments (docker cmd) [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-scheduling] SchedulerPredicates [Serial] validates that NodeSelector is respected if matching [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API should provide default limits.cpu/memory from node allocatable [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should 
+provide node allocatable (cpu) as default cpu limit if the limit is not 
+set [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Variable Expansion should allow substituting values in a container's command [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should provide container's cpu request [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should set DefaultMode on files [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Proxy version v1 should proxy logs on node with explicit kubelet port [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (root,0666,default) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should provide node 
+allocatable (memory) as default memory limit if the limit is not set 
+[Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Services should serve a basic endpoint from pods [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes volume on tmpfs should have the correct mode [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] DNS should provide DNS for services [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Variable Expansion should allow composing env vars into new env vars [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets should be consumable from pods in volume with mappings [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Networking Granular Checks: Pods should function for intra-pod communication: udp [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Events should be sent by kubelets and the scheduler about pods scheduling and running [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] KubeletManagedEtcHosts should test kubelet managed /etc/hosts file [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] EmptyDir volumes should support (non-root,0644,default) [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Projected should provide podname only [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Probing container should be restarted with a /healthz http liveness probe [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] ConfigMap should be consumable from pods in volume with mappings as non-root [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API volume should provide podname only [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets should be consumable via the environment [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Secrets should be consumable from pods in volume [Conformance] [sig-storage]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Downward API should provide pod name and namespace as env vars [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-apps] ReplicationController should serve a basic image on each replica with a public image [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[k8s.io] Probing container with readiness probe should not be ready before initial delay and never restart [Conformance]</div>
+          </div>
+        
+          <div class="test passed">
+            <div class="badge passed">✔</div>
+            <div class="name">[sig-network] Proxy version v1 should proxy logs on node with explicit kubelet port using proxy subresource [Conformance]</div>
+          </div>
+        
+        </div>
+      </div>
+      
+<div class="info-footer">
+  <div class="info-text">
+    <div class="footer-icon roulette green"></div>
+    <p>
+      Made with love by <a class="roulette green" href="https://heptio.com/" target="_blank">Heptio</a>.
+    </p>
+    <a class="roulette green" href="https://scanner.heptio.com/tos/" target="_blank">Terms of Service</a>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+  <div id="side-panel" class="side-panel">
+    <div class="header">
+      <a href="javascript:void(0)" class="panel-trigger close-btn">
+        close <span class="close-icon">×</span>
+      </a>
+    </div>
+    <div class="panel-content">
+      <h2>Run conformance tests again</h2>
+      <p>
+        To review another set of results, you can run Sonobuoy Scanner again.
+      </p>
+      <p>
+        Note that your new report is associated with a new URL, so make sure to bookmark the new URL.
+      </p>
+      <form action="/ids/" method="post" target="_blank">
+        <input class="btn roulette green" value="Scan your cluster again" type="submit">
+      </form>
+    </div>
+  </div>
+
+    
+    <script async="" src="Sonobuoy%20Scanner%20Results_files/analytics.js"></script><script type="text/javascript" src="Sonobuoy%20Scanner%20Results_files/bundle.js" charset="utf-8"></script>
+    
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-87261440-7', 'none');
+      ga('send', 'pageview');
+  </script>
+  
+
+</body></html>

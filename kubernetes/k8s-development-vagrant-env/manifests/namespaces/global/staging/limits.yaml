@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: staging-limit-ranges
+  namespace: staging
+  labels:
+    team: pcit
+spec:
+  limits:
+  - type: PersistentVolumeClaim
+    max:
+      storage: 5Gi
+    min:
+      storage: 1Gi

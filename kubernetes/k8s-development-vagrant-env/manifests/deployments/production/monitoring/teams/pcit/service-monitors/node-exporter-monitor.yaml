@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pcit-commons-node-exporter
+  namespace: pcit-commons
+  labels:
+    team: pcit
+    environment: pcit-commons
+spec:
+  jobLabel: k8s-vagrant-hosts
+  selector:
+    matchLabels:
+      app: pcit-node-exporter
+  namespaceSelector:
+    matchNames:
+    - pcit-commons
+  endpoints:
+  - port: http-metrics
+    path: /metrics
+    interval: 30s

@@ -1,0 +1,205 @@
+.core-content {
+  background: #ffffff;
+  padding: 3vw;
+}
+
+.yaml-content {
+  border-radius: 2px;
+  border: 2px solid var(--light-gray);
+  color: var(--black);
+  margin-bottom: 40px;
+  padding: 0 40px;
+}
+
+.footer-icon {
+  background-image: url('../assets/logo-green-gradient.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 60px;
+  margin: auto;
+  width: 60px;
+}
+
+.step {
+  align-items: center;  
+  display: flex;
+  margin: 20px;
+}
+
+.copy-container {
+  display: flex;
+}
+
+.copy-container.header {
+  align-items: center;
+}
+
+.copy-container.header .copy-action {
+  border-radius: 2px;
+  margin-left: auto;
+  max-width: 61px;
+}
+
+.copy {
+  align-items: center;
+  background: var(--gradient-green-left);
+  border-radius: 0 2px 2px 0;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  margin-top: -10px;
+  min-width: 100px;
+  padding: 10px;
+  text-transform: uppercase;
+}
+
+.basic.copy {
+  background: var(--light-gray);
+  color: var(--black);
+}
+
+.basic.copy:hover {
+  background: var(--dark-gray);
+}
+
+.copy-error {
+  background: var(--dark-yellow) !important;
+}
+
+.instructions .cli {
+  margin-top: -10px;
+}
+
+.cli {
+  background-color: var(--black-transparent);
+  border-radius: 2px 0 0 2px;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 15px 10px;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+.cli .url {
+  word-break: break-all;
+}
+
+.steps {
+  margin-bottom: 44px;
+}
+
+.divider {
+  border-bottom: 1px var(--black) solid;
+  margin-bottom: 45px;
+}
+
+.step .delimiter {
+  background: var(--light-green);
+  border-radius: 50%;
+  margin-right: 20px;
+  min-height: 12px;
+  min-width: 12px;
+}
+
+.step .delimiter span {
+  padding-bottom: 2px;
+}
+
+.step p,
+.step pre {
+  display: inline-block;
+}
+
+/* Loading State */
+.running {
+  text-align: center;
+}
+
+/* spin for loading el */
+@keyframes spin {
+  100% {transform: rotate(360deg); transform:rotate(360deg);}
+}
+
+/* cycle through colors and camera shudder effect */
+@keyframes camera {
+  0%   {
+    border-left-width: 60px;
+    border-bottom-color: var(--light-blue);
+  }
+  10%  {border-bottom-color: var(--dark-blue);}
+  20%  {border-bottom-color: var(--light-green);}
+  30%  {border-bottom-color: var(--dark-green);}
+  40%  {border-bottom-color: var(--light-yellow);}
+  50%  {
+    border-bottom-color: var(--dark-yellow);
+    border-left-width: 0px;
+  }
+  70%  {border-bottom-color: var(--light-yellow);}
+  80%  {border-bottom-color: var(--dark-green);}
+  80%  {border-bottom-color: var(--light-green);}
+  90%  {border-bottom-color: var(--dark-blue);}
+  100% {
+    border-left-width: 60px;
+    border-bottom-color: var(--light-blue);}
+}
+
+/* full heptagon */
+.heptagon {
+  width: 250px;
+  height: 250px;
+  position: relative;
+  display: inline-block;
+  animation: spin 7s linear infinite;
+}
+
+/* each triangle that makes up the heptagon */
+.heptagon div {
+  animation: camera 15s linear infinite;
+	border-bottom-width: 125px;
+  border-left-color: transparent;
+  border-left-style: solid;
+	border-left-width: 60px;
+  border-right-color: transparent;
+  border-right-style: solid;
+  border-bottom-style: solid;
+	border-right-width: 61px;
+	height: 125px;
+	left: 70px;
+  position: absolute;
+  width: 0px;
+}
+
+h2.top {
+  font-weight: 400;
+  margin-bottom: 60px;
+}
+
+/* all the triangles rotation */
+.heptagon .rot0deg {
+  transform: rotate(0deg);
+}
+
+.heptagon .rot51deg {
+  transform: rotate(51deg);
+}
+
+.heptagon .rot102deg {
+  transform: rotate(102deg);
+}
+
+.heptagon .rot154deg {
+  transform: rotate(154deg);
+}
+
+.heptagon .rot205deg {
+  transform: rotate(205deg);
+}
+
+.heptagon .rot257deg {
+  transform: rotate(257deg);
+}
+
+.heptagon .rot308deg {
+  transform: rotate(309deg);
+}
