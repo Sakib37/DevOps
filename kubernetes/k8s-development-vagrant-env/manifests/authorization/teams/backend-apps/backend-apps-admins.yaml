@@ -1,0 +1,57 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: backend-apps-commons-admins-binding
+  namespace: backend-apps-commons
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: team-admins-read-write-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: backend-apps-admins
+- kind: ServiceAccount
+  name: tiller
+  namespace: backend-apps-commons
+
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: backend-apps-staging-admins-binding
+  namespace: backend-apps-staging
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: team-admins-read-write-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: backend-apps-admins
+- kind: ServiceAccount
+  name: tiller
+  namespace: backend-apps-staging
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: backend-apps-production-admins-binding
+  namespace: backend-apps-production
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: team-admins-read-write-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: backend-apps-admins
+- kind: ServiceAccount
+  name: tiller
+  namespace: backend-apps-production
+
+---

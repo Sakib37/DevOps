@@ -1,0 +1,27 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: backend-apps-staging-role
+  namespace: backend-apps-staging
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: backend-apps-staging-read-only-binding
+  namespace: backend-apps-staging
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: backend-apps-staging-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: backend-apps-staging
+
+---

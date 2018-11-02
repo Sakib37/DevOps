@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: backend-apps-commons-resource-quotas
+  namespace: backend-apps-commons
+  labels:
+    team: backend-apps
+spec:
+  hard:
+    persistentvolumeclaims: "5"
+    requests.storage: "10Gi"

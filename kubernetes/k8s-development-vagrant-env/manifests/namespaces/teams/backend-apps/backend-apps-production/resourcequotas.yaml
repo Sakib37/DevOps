@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: backend-apps-production-resource-quotas
+  namespace: backend-apps-production
+  labels:
+    team: backend-apps
+spec:
+  hard:
+    persistentvolumeclaims: "5"
+    requests.storage: "10Gi"

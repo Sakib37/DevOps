@@ -58,8 +58,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   bridgeInterface = conf['host_interface']
 
   # Define the details of the base box to be used for all nodes in the landscape (CentOS 6.5 base box)
-  config.vm.box = "ubuntu/xenial64"
-  config.vm.box_version = ">20180503.0.0"
+  #config.vm.box = "ubuntu/xenial64"
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.box_version = ">20181026.0.0"
 
   # Define network bridge for the network interfaces on all nodes
   #config.vm.network "public_network", bridge:'eth0'

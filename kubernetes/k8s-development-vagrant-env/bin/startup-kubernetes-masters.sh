@@ -3,6 +3,7 @@
 
 sudo -E -s -- <<"EOF"
 
+source /etc/environment
 systemctl daemon-reload
 
 # start etcd
@@ -11,9 +12,12 @@ systemctl enable etcd.service
 systemctl start etcd.service
 echo "done"
 
+echo "Waiting for the ETCD service to be running ..."
+sleep 4
+
 echo "checking etcd status"
 # check etcd status
-ETCDCTL_API=3 etcdctl --cert=/etc/tls/etcd/k8s-server-1-client.pem --key=/etc/tls/etcd/k8s-server-1-client-key.pem member list
+ETCDCTL_API=3 etcdctl --cert=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client.pem --key=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client-key.pem member list
 echo "done"
 
 # start kubernetes apiserver

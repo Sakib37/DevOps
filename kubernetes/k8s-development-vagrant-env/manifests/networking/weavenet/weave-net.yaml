@@ -15,6 +15,7 @@ spec:
     protocol: TCP
   selector:
     name: weave-net
+
 ---
 
 apiVersion: v1
@@ -133,8 +134,6 @@ items:
                     fieldRef:
                       apiVersion: v1
                       fieldPath: spec.nodeName
-                - name: EXPECT_NPC
-                  value: '0'
               image: 'weaveworks/weave-kube:2.4.1'
               livenessProbe:
                 httpGet:
@@ -160,26 +159,19 @@ items:
                   mountPath: /host/var/lib/dbus
                 - name: lib-modules
                   mountPath: /lib/modules
-                - name: xtables-lock
-                  mountPath: /run/xtables.lock
-                  readOnly: false
-#            - name: weave-npc
-#              env:
-#                - name: HOSTNAME
-#                  valueFrom:
-#                    fieldRef:
-#                      apiVersion: v1
-#                      fieldPath: spec.nodeName
-#              image: 'weaveworks/weave-npc:2.4.1'
-#              resources:
-#                requests:
-#                  cpu: 10m
-#              securityContext:
-#                privileged: true
-#              volumeMounts:
-#                - name: xtables-lock
-#                  mountPath: /run/xtables.lock
-#                  readOnly: false
+            - name: weave-npc
+              env:
+                - name: HOSTNAME
+                  valueFrom:
+                    fieldRef:
+                      apiVersion: v1
+                      fieldPath: spec.nodeName
+              image: 'weaveworks/weave-npc:2.4.1'
+              resources:
+                requests:
+                  cpu: 10m
+              securityContext:
+                privileged: true
           hostNetwork: true
           hostPID: true
           restartPolicy: Always
@@ -208,8 +200,3 @@ items:
             - name: lib-modules
               hostPath:
                 path: /lib/modules
-            - name: xtables-lock
-              hostPath:
-                path: /run/xtables.lock
-
-

@@ -1,0 +1,45 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: backend-apps-commons-pod-admission
+  namespace: backend-apps-commons
+roleRef:
+  kind: ClusterRole
+  name: team-pods-admission-policy-role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: Group
+  apiGroup: rbac.authorization.k8s.io
+  name: system:serviceaccounts
+
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: backend-apps-staging-pod-admission
+  namespace: backend-apps-staging
+roleRef:
+  kind: ClusterRole
+  name: team-pods-admission-policy-role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: Group
+  apiGroup: rbac.authorization.k8s.io
+  name: system:serviceaccounts
+
+---
+
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: backend-apps-production-pod-admission
+  namespace: backend-apps-production
+roleRef:
+  kind: ClusterRole
+  name: team-pods-admission-policy-role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: Group
+  apiGroup: rbac.authorization.k8s.io
+  name: system:serviceaccounts

@@ -1,0 +1,26 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: backend-apps-commons-role
+  namespace: backend-apps-commons
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: backend-apps-commons-read-only-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: backend-apps-commons-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: backend-apps-commons
+
+---

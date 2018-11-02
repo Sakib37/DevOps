@@ -12,5 +12,5 @@ kubectl apply -f manifests/networking/dns/ | tee -a logs/manifests.log
 sleep 30
 
 # install kube-router in firewall mode to provide a complete implementation of kubernetes network policies
-kubectl apply -f manifests/networking/kube-router/ | tee -a logs/manifests.log
+#kubectl apply -f manifests/networking/kube-router/ | tee -a logs/manifests.log
 sleep 30

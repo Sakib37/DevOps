@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-apps-commons-firewall
+  namespace: backend-apps-commons
+  labels:
+    team: backend-apps
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          env: monitoring-core
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          env: backend-apps-staging
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          env: backend-apps-production
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          env: kube-system
+    ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+

@@ -34,5 +34,5 @@ echo "done starting kubernetes worker services"
 rm -rf ${SSH_CONFIG_DIR}
 
 echo "waiting for kubernetes api refresh to succeed..."
-sleep 20
+sleep 10
 echo "...kubernetes api refresh probably done"
