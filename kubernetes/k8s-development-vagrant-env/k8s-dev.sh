@@ -103,7 +103,7 @@ then
     fi
     
     
-    mkdir -p logs tls
+    mkdir -p logs tls disks  temp_downloaded
 
     # start the vms in series
 	vagrant up --no-provision $MACHINE | tee logs/boot.log

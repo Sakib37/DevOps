@@ -29,3 +29,7 @@ Session.vim
 tags
 # Persistent undo
 [._]*.un~
+
+# ignore temp_download directory
+
+temp_downloaded/*

@@ -13,7 +13,7 @@ systemctl start etcd.service
 echo "done"
 
 echo "Waiting for the ETCD service to be running ..."
-sleep 4
+sleep 5
 
 echo "checking etcd status"
 # check etcd status

@@ -2,14 +2,14 @@
 
 set -xe
 
-#DOCKER_ENGINE_VERSION=1.13.1
-DOCKER_ENGINE_VERSION=17.03.0-ce
+
+DOCKER_ENGINE_VERSION=17.03.2-ce
 DOCKER_BINARY_VM_LOCATION=/vagrant/temp_downloaded/docker-${DOCKER_ENGINE_VERSION}.tgz
-DOCKER_BINARY_DOWNLOAD_URL=https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_ENGINE_VERSION}.tgz
+DOCKER_BINARY_DOWNLOAD_URL=https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_ENGINE_VERSION}.tgz
 DOCKER_USER=vagrant
 
 cat > /etc/default/docker-engine.conf <<"EOL"
-DOCKER_ENGINE_VERSION=17.03.0-ce
+DOCKER_ENGINE_VERSION=17.03.2-ce
 DOCKER_OPTS=
 EOL
 
@@ -25,9 +25,9 @@ source /etc/environment
 sudo -E -s -- <<EOF
 
 # install dependencies
-add-apt-repository -y ppa:alexlarsson/flatpak
-apt-get update -qq --yes
-apt-get install -qq --yes socat libgpgme11 libostree-1-1 conntrack ipset udev swapspace
+#add-apt-repository -y ppa:alexlarsson/flatpak
+#apt-get update -qq --yes
+#apt-get install -qq --yes socat libgpgme11 libostree-1-1 conntrack ipset udev swapspace
 
 if ! [ -f ${DOCKER_BINARY_VM_LOCATION} ]
 then
@@ -35,7 +35,7 @@ then
     wget -q ${DOCKER_BINARY_DOWNLOAD_URL} -O ${DOCKER_BINARY_VM_LOCATION} &>/dev/null
 fi
 
-tar xzf ${DOCKER_BINARY_VM_LOCATION} --strip-components=1 -C /usr/local/bin &>/dev/null
+tar xzf ${DOCKER_BINARY_VM_LOCATION} --strip-components=1 -C /usr/local/bin/ &>/dev/null
 
 cat > /etc/systemd/system/docker.service <<"EOL"
 [Unit]
@@ -44,7 +44,7 @@ Documentation=http://docs.docker.io
 
 [Service]
 EnvironmentFile=/etc/default/docker-engine.conf
-ExecStart=/usr/local/bin/docker daemon \
+ExecStart=/usr/local/bin/dockerd \
   --iptables=false \
   --ip-masq=false \
   --host=unix:///var/run/docker.sock \
@@ -70,7 +70,7 @@ sudo groupadd docker
 sudo usermod -aG docker ${DOCKER_USER}
 sudo usermod -aG docker ${KUBERNETES_PLATFORM_USER}
 # Make user entry to group 'docker' effective without restart
-exec /usr/bin/newgrp docker
+sudo bash -c "/usr/bin/newgrp docker"
 
 
 # Bash completion for docker

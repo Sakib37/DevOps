@@ -3,6 +3,7 @@
 export SSH_CONFIG_DIR=.vagrant/ssh-config
 mkdir -p ${SSH_CONFIG_DIR}
 
+
 # start kubernetes master services
 for one in $(vagrant hosts list | grep k8s-server | awk '{print $2}')
 do

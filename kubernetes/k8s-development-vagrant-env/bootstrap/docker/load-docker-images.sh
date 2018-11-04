@@ -5,6 +5,9 @@ set -xe
 # source the ubuntu global env file to make docker-engine variables available to this session
 source /etc/environment
 
+
+sudo -E -s -- << EOF
+
 IMAGE_NAME_LIST=$(docker images | sed -n '1!p' | awk  '{print $1}' |  rev | cut -d '/' -f1 | rev)
 IMAGES_LIST=$(docker images | sed -n '1!p' | awk  '{print $1}' )
 DOCKER_IMAGE_DIR=/vagrant/temp_downloaded/docker-images
@@ -20,7 +23,7 @@ do
     if ! [ -f ${DOCKER_IMAGE_DIR}/${IMAGE_NAME}.tar ]
     then
         echo "Saving docker image ${IMAGE_NAME}"
-        docker save -o ${DOCKER_IMAGE_DIR}/${IMAGE_NAME}.tar  ${image}  > /dev/null 2>&1 &
+        docker save -o ${DOCKER_IMAGE_DIR}/${IMAGE_NAME}.tar  ${image}  > /dev/null 2>&1
     fi
 done
 
@@ -33,6 +36,7 @@ do
      docker load -i ${image_tar}  > /dev/null 2>&1 &
 done
 
-sleep 60
+EOF
+sleep 5
 
 exit 0
