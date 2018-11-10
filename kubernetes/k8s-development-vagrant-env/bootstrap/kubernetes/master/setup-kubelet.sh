@@ -7,6 +7,8 @@ source /etc/environment
 export POD_CIDR=${1}
 export KUBERNETES_SERVICE_CLOUD_PROVIDER=${2}
 export KUBERNETES_CLUSTER_DNS=${3}
+export KUBELET_NODE_NAME=$(hostname)
+
 
 
 # Note: As "CFSSL_TLS_GUEST_FOLDER" variable is not expanded in '/etc/systemd/system/kubelet.service' , the value
