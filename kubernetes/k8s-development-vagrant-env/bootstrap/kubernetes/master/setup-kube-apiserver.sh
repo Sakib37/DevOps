@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -xe
+
 source /etc/environment
 
 export KUBERNETES_SERVER_IP=${1}
@@ -9,9 +10,6 @@ export KUBERNETES_SERVICE_CLUSTER_IP_RANGE=${3}
 export KUBERNETES_SERVICE_NODE_PORT_RANGE=${4}
 export KUBERNETES_SERVICE_CLOUD_PROVIDER=${5}
 export KUBERNETES_SERVICE_ENABLE_POD_SECURITY_POLICY=${6}
-
-# Never use 'KUBERNETES_SERVICE_ADMISSION_PLUGINS' in systemd unit file. It breaks kube-apiserver
-#################################################################################################
 export KUBERNETES_SERVICE_ADMISSION_PLUGINS=Initializers,NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,PersistentVolumeClaimResize,AlwaysPullImages,PodPreset
 
 # if pod security policy is set as enabled through the config file then add PodSecurityPolicy to list of admission plugins

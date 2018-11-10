@@ -13,7 +13,6 @@ export CERT_NAME=${HOSTNAME}-apiserver
 # source the ubuntu global env file to make cfssl variables available to this session
 source /etc/environment
 
-
 mkdir -p ${CFSSL_TLS_GUEST_FOLDER}/kube-api
 
 HOSTNAME=$(hostname)

@@ -72,5 +72,4 @@ sudo chmod 644 ${CFSSL_TLS_GUEST_FOLDER}/kube-controller/$(hostname)-kube-contro
 
 echo "Kube-Controller-Manager Client Certificates successfully generated"
 
-
 exit 0

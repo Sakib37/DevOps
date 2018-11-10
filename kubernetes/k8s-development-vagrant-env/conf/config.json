@@ -30,7 +30,7 @@
   "kubernetes_services_ip_range": "10.77.0.0/16",
   "kubernetes_service_node_port_range": "30000-32767",
   "kubernetes_cluster_dns": "10.77.0.10",
-  "host_interface": "wlp1s0",
+  "host_interface": "wlp4s0",
   "tls_host_folder": "tls/",
   "tls_guest_folder": "/etc/tls/k8s",
   "kubeconfig_folder": "/vagrant/conf/kubeconfig",
@@ -38,6 +38,6 @@
   "enable_pod_security_policies": "false",
   "enable_network_policies": "false",
   "enable_service_mesh": "false",
-  "enable_rook_storage": "true",
+  "enable_rook_storage": "false",
   "enable_sample_apps": "false"
 }

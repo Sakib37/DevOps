@@ -6,9 +6,7 @@ source /etc/environment
 
 export POD_CIDR=${1}
 
-sudo -E -s <<"EOF"
-
-cat > /etc/default/kube-proxy.conf << EOL
+sudo tee "/etc/default/kube-proxy.conf" > /dev/null <<EOL
 KUBE_PROXY_POD_CIDR=${POD_CIDR}
 KUBE_PROXY_NODE_NAME=$(hostname)
 KUBERNETES_PLATFORM_USER=${KUBERNETES_PLATFORM_USER}
@@ -23,10 +21,9 @@ grep -q -F '. /etc/default/kube-proxy.conf' /etc/environment || echo '. /etc/def
 # source the ubuntu global env file to make kube-proxy variables available to this session
 source /etc/environment
 
-chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kube-proxy.conf
+sudo chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kube-proxy.conf
 
-
-cat > ${KUBE_PROXY_CONFIGURATION_FILE} <<EOL
+sudo tee ${KUBE_PROXY_CONFIGURATION_FILE} > /dev/null <<EOL
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
 bindAddress: 0.0.0.0
@@ -65,8 +62,7 @@ resourceContainer: /kube-proxy
 udpIdleTimeout: 250ms
 EOL
 
-
-cat > /etc/systemd/system/kube-proxy.service <<"EOL"
+sudo tee /etc/systemd/system/kube-proxy.service > /dev/null <<"EOL"
 [Unit]
 Description=Kubernetes Kube Proxy
 Documentation=https://github.com/kubernetes/kubernetes
@@ -86,9 +82,8 @@ TimeoutStartSec=0
 WantedBy=multi-user.target
 EOL
 
-systemctl daemon-reload && systemctl enable kube-proxy.service && systemctl start kube-proxy.service
+#systemctl daemon-reload && systemctl enable kube-proxy.service && systemctl start kube-proxy.service
 
-EOF
 
 echo "Kubernetes Kube Proxy v${KUBERNETES_PLATFORM_VERSION} configured successfully"
 

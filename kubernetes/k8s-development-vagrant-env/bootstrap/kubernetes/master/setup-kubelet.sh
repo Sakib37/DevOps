@@ -8,13 +8,11 @@ export POD_CIDR=${1}
 export KUBERNETES_SERVICE_CLOUD_PROVIDER=${2}
 export KUBERNETES_CLUSTER_DNS=${3}
 
-sudo -E -s -- <<"EOF"
-
 
 # Note: As "CFSSL_TLS_GUEST_FOLDER" variable is not expanded in '/etc/systemd/system/kubelet.service' , the value
 # of  "CFSSL_TLS_GUEST_FOLDER" must be set in '/etc/default/kubelet.conf'
 
-cat > /etc/default/kubelet.conf <<EOL
+sudo tee "/etc/default/kubelet.conf" > /dev/null <<EOL
 CFSSL_TLS_GUEST_FOLDER=${CFSSL_TLS_GUEST_FOLDER}
 KUBELET_POD_CIDR=${POD_CIDR}
 KUBELET_NODE_NAME=$(hostname)
@@ -26,7 +24,6 @@ KUBELET_CONFIGURATION_FILE=${KUBERNETES_PLATFORM_HOME}/kubelet-configuration.yam
 GOMAXPROCS=$(nproc)
 EOL
 
-EOF
 
 # add a line which sources /etc/default/kubelet.conf in the ubuntu global env /etc/environment file
 grep -q -F '. /etc/default/kubelet.conf' /etc/environment || echo '. /etc/default/kubelet.conf' >> /etc/environment
@@ -34,17 +31,16 @@ grep -q -F '. /etc/default/kubelet.conf' /etc/environment || echo '. /etc/defaul
 # source the ubuntu global env file to make kubelet variables available to this session
 source /etc/environment
 
-chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kubelet.conf
+sudo chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kubelet.conf
 
 
 # Check "https://github.com/kubernetes/kubernetes/issues/69665" for kubelet config file example
-sudo -E -s -- <<EOF
 
 # NOTE: Environment variables must be expanded inside the ${KUBELET_CONFIGURATION_FILE}. Any ENV variable in
 # ${KUBELET_CONFIGURATION_FILE} make kubelet to fail
 
 
-cat > ${KUBELET_CONFIGURATION_FILE} <<EOL
+sudo tee ${KUBELET_CONFIGURATION_FILE} > /dev/null <<EOL
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 nodeStatusUpdateFrequency: 10s
@@ -70,8 +66,7 @@ featureGates:
     ExperimentalCriticalPodAnnotation: true
 EOL
 
-
-cat > /etc/systemd/system/kubelet.service <<"EOL"
+sudo tee /etc/systemd/system/kubelet.service  > /dev/null <<"EOL"
 [Unit]
 Description=Kubernetes Kubelet
 Documentation=https://github.com/kubernetes/kubernetes
@@ -108,8 +103,6 @@ WantedBy=multi-user.target
 EOL
 
 #systemctl daemon-reload && systemctl enable kube-scheduler.service && systemctl start kube-scheduler.service
-
-EOF
 
 echo "Kubernetes Kubelet v${KUBERNETES_PLATFORM_VERSION} configured successfully"
 

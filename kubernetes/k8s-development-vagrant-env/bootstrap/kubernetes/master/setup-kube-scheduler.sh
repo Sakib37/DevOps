@@ -4,9 +4,7 @@ set -xe
 
 source /etc/environment
 
-sudo -E -s <<"EOF"
-
-cat > /etc/default/kube-scheduler.conf << EOL
+sudo tee "/etc/default/kube-scheduler.conf" > /dev/null <<EOL
 KUBERNETES_PLATFORM_USER=${KUBERNETES_PLATFORM_USER}
 KUBERNETES_PLATFORM_GROUP=${KUBERNETES_PLATFORM_GROUP}
 KUBERNETES_NODE_NAME=$(hostname)
@@ -20,10 +18,9 @@ grep -q -F '. /etc/default/kube-scheduler.conf' /etc/environment || echo '. /etc
 # source the ubuntu global env file to make etcd variables available to this session
 source /etc/environment
 
-chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kube-scheduler.conf
+sudo chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kube-scheduler.conf
 
-
-cat > ${KUBE_SCHEDULER_CONFIGURATION} <<EOL
+sudo tee ${KUBE_SCHEDULER_CONFIGURATION} > /dev/null <<EOL
 kind: KubeSchedulerConfiguration
 apiVersion: componentconfig/v1alpha1
 algorithmSource:
@@ -52,8 +49,7 @@ metricsBindAddress: 0.0.0.0:10251
 schedulerName: default-scheduler
 EOL
 
-
-cat > /etc/systemd/system/kube-scheduler.service <<"EOL"
+sudo tee /etc/systemd/system/kube-scheduler.service > /dev/null <<"EOL"
 [Unit]
 Description=Kubernetes Scheduler
 Documentation=https://github.com/kubernetes/kubernetes
@@ -74,8 +70,6 @@ WantedBy=multi-user.target
 EOL
 
 #systemctl daemon-reload && systemctl enable kube-scheduler.service && systemctl start kube-scheduler.service
-
-EOF
 
 echo "Kubernetes Scheduler v${KUBERNETES_PLATFORM_VERSION} configured successfully"
 

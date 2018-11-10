@@ -23,7 +23,6 @@ mkdir -p ${CFSSL_TLS_GUEST_FOLDER}/kubernetes
 
 # generate admin operator certificate signing request
 
-
 cat - > ${CFSSL_TLS_GUEST_FOLDER}/kubernetes/${CERT_NAME}-csr.json <<EOF
 {
   "CN": "${CERT_NAME}",
@@ -50,7 +49,7 @@ cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem -ca-key=${CFSSL_TLS_GUEST_
 
 
 # verify generated client certificate
-    openssl x509 -noout -text -in ${CFSSL_TLS_GUEST_FOLDER}/kubernetes/${CERT_NAME}.pem
+openssl x509 -noout -text -in ${CFSSL_TLS_GUEST_FOLDER}/kubernetes/${CERT_NAME}.pem
 
 # verify certificate functionality for client and server authentication
 echo "verifying with ${CFSSL_TLS_GUEST_FOLDER}/ca/ca-chain.pem for ssl client functionality"
