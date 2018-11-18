@@ -8,11 +8,11 @@ source /etc/environment
 
 sudo -E -s -- << EOF
 
-IMAGE_NAME_LIST=$(docker images | sed -n '1!p' | awk  '{print $1}' |  rev | cut -d '/' -f1 | rev)
-IMAGES_LIST=$(docker images | sed -n '1!p' | awk  '{print $1}' )
-DOCKER_IMAGE_DIR=/vagrant/temp_downloaded/docker-images
+export IMAGE_NAME_LIST=$(docker images | sed -n '1!p' | awk  '{print $1}' |  rev | cut -d '/' -f1 | rev)
+export IMAGES_LIST=$(docker images | sed -n '1!p' | awk  '{print $1}' )
+export DOCKER_IMAGE_DIR=/vagrant/temp_downloaded/docker-images
 
-mkdir -p ${DOCKER_IMAGE_DIR}
+mkdir -p "${DOCKER_IMAGE_DIR}"
 
 
 # Save docker images to "/vagrant/temp_downloaded/docker-images"

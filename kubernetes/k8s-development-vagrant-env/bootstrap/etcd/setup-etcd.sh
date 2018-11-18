@@ -12,8 +12,8 @@ export ETCDCTL_CERT=${CFSSL_TLS_GUEST_FOLDER}/etcd/$(hostname)-client.pem
 export ETCDCTL_KEY=${CFSSL_TLS_GUEST_FOLDER}/etcd/$(hostname)-client-key.pem
 
 
-# creating ETCTDCTL_ENDPOINT
-ETCDCTL_ENDPOINT=
+# creating ETCD_SERVERS_ENDPOINT
+ETCD_SERVERS_ENDPOINT=
 ETCD_INITIAL_CLUSTER=
 
 for (( i=1; i<=${ETCD_CLUSTER_SIZE}; i++))
@@ -25,7 +25,7 @@ do
         NODE=https://k8s-server-${i}:2379,
         INIT_CLUSTER_PEER=k8s-server-${i}=https://k8s-server-${i}:2380,
     fi
-    ETCDCTL_ENDPOINT=${ETCDCTL_ENDPOINT}${NODE}
+    ETCD_SERVERS_ENDPOINT=${ETCD_SERVERS_ENDPOINT}${NODE}
     ETCD_INITIAL_CLUSTER=${ETCD_INITIAL_CLUSTER}${INIT_CLUSTER_PEER}
 done
 
@@ -35,7 +35,7 @@ export ETCDCTL_API=3
 export ETCDCTL_CACERT=${ETCDCTL_CACERT}
 export ETCDCTL_CERT=${ETCDCTL_CERT}
 export ETCDCTL_KEY=${ETCDCTL_KEY}
-export ETCDCTL_ENDPOINT=${ETCDCTL_ENDPOINT}
+export ETCD_SERVERS=${ETCD_SERVERS_ENDPOINT}
 export ETCD_INITIAL_CLUSTER=${ETCD_INITIAL_CLUSTER}
 EOL
 
@@ -108,7 +108,7 @@ EOL
 # export ETCDCTL_CA_FILE=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem
 # export ETCDCTL_CERT_FILE=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client.pem
 # export ETCDCTL_KEY_FILE=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client-key.pem
-# export ETCDCTL_ENDPOINT=https://k8s-server-1:2379,https://k8s-server-2:2379,https://k8s-server-3:2379
+# export ETCD_SERVERS_ENDPOINT=https://k8s-server-1:2379,https://k8s-server-2:2379,https://k8s-server-3:2379
 
 EOF
 

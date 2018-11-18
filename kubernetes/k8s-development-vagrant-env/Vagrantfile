@@ -178,7 +178,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # generate kube-proxy client certificates
       k8s_master_node.vm.provision "shell" do |s|
-        s.path = "bootstrap/cfssl/gen-k8s-certs-kubeproxy-client.sh"
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kube-proxy-client.sh"
         s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
       end
 
@@ -424,7 +424,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # generate kube-proxy client certificates
       k8s_worker_node.vm.provision "shell" do |s|
-        s.path = "bootstrap/cfssl/gen-k8s-certs-kubeproxy-client.sh"
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kube-proxy-client.sh"
         s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
       end
 

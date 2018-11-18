@@ -36,7 +36,7 @@ KUBERNETES_SERVICE_ADMISSION_PLUGINS=${KUBERNETES_SERVICE_ADMISSION_PLUGINS}
 KUBERNETES_PLATFORM_USER=${KUBERNETES_PLATFORM_USER}
 KUBERNETES_PLATFORM_GROUP=${KUBERNETES_PLATFORM_USER}
 KUBERNETES_PLATFORM_HOME=${KUBERNETES_PLATFORM_HOME}
-ETCD_SERVERS=${ETCDCTL_ENDPOINT}
+ETCD_SERVERS=${ETCD_SERVERS}
 GOMAXPROCS=$(nproc)
 EOL
 
@@ -53,8 +53,8 @@ mkdir -p ${KUBERNETES_PLATFORM_HOME}/audit/logs
 
 chown -R ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} ${KUBERNETES_PLATFORM_HOME}/*
 
-# NOTE: "ETCDCTL_ENDPOINT" is already setup in /etc/environment by bootstrap/etcd/setup-etcd.sh.
-#        "--etcd-servers" below is same as "ETCDCTL_ENDPOINT" value
+# NOTE: "ETCD_SERVERS" is already setup in /etc/environment by bootstrap/etcd/setup-etcd.sh.
+#        "--etcd-servers" below is same as "ETCD_SERVERS" value
 
 cat > /etc/systemd/system/kube-apiserver.service <<"EOL"
 [Unit]

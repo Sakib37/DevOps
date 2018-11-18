@@ -22,7 +22,7 @@ mkdir -p ${CFSSL_TLS_GUEST_FOLDER}/ca
 
 cat - > ${CFSSL_TLS_GUEST_FOLDER}/ca/ca-csr.json <<'EOF'
 {
-  "CN": "Kubernetes Development Cluster Root CA",
+  "CN": "Kubernetes",
   "key": {
     "algo": "rsa",
     "size": 2048
@@ -36,7 +36,7 @@ cat - > ${CFSSL_TLS_GUEST_FOLDER}/ca/ca-csr.json <<'EOF'
       "C": "DE",
       "L": "Berlin",
       "O": "Kubernetes",
-      "OU": "Kubernetes Development Cluster",
+      "OU": "CA",
       "ST": "Berlin"
     }
   ]
@@ -62,31 +62,10 @@ cat - > ${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json <<'EOF'
             "max_path_len_zero":true
          }
       },
-      "profiles":{
-         "server":{
-            "expiry":"43800h",
-            "usages":[
-               "signing",
-               "key encipherment",
-               "server auth"
-            ]
-         },
-         "client":{
-            "expiry":"43800h",
-            "usages":[
-               "signing",
-               "key encipherment",
-               "client auth"
-            ]
-         },
-         "client-server":{
-            "expiry":"43800h",
-            "usages":[
-               "signing",
-               "key encipherment",
-               "server auth",
-               "client auth"
-            ]
+      "profiles": {
+         "kubernetes": {
+            "usages": ["signing", "key encipherment", "server auth", "client auth"],
+            "expiry": "8760h"
          }
       }
    }

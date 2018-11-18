@@ -7,6 +7,7 @@ CNI_DOWNLOAD_URL=https://github.com/containernetworking/plugins/releases/downloa
 CNI_VM_LOCATION=/vagrant/temp_downloaded/cni-plugins-amd64-v${CNI_VERSION}.tgz
 
 export POD_CIDR=${1}
+export CNI_VERSION=${CNI_VERSION}
 
 sudo -E -s -- <<EOF
 
@@ -22,10 +23,8 @@ grep -q -F '. /etc/default/cni' /etc/environment || echo '. /etc/default/cni' >>
 source /etc/environment
 
 # create directories
-mkdir -p \
-  /etc/cni/net.d \
-  /opt/cni/bin/ \
-  /var/run/kubernetes
+mkdir -p  "/etc/cni/net.d"  "/opt/cni/bin/"   "/var/run/kubernetes"
+
 
 # Install the cni runtime
 if ! [ -f ${CNI_VM_LOCATION} ]
@@ -36,31 +35,31 @@ fi
 
 tar -xvf ${CNI_VM_LOCATION} --strip-components=1 -C /opt/cni/bin/ &>/dev/null
 
-#cat > 10-bridge.conf <<EOL
-#{
-#    "cniVersion": "0.3.1",
-#    "name": "bridge",
-#    "type": "bridge",
-#    "bridge": "cni0",
-#    "isGateway": false,
-#    "ipMasq": false,
-#    "ipam": {
-#        "type": "host-local",
-#        "ranges": [
-#          [{"subnet": "${POD_CIDR}"}]
-#        ],
-#        "routes": [{"dst": "0.0.0.0/0"}]
-#    }
-#}
-#EOL
-#
-#cat > 99-loopback.conf <<EOL
-#{
-#    "cniVersion": "0.3.1",
-#    "type": "loopback"
-#}
-#EOL
-#mv 10-bridge.conf 99-loopback.conf /etc/cni/net.d/
+cat > 10-bridge.conf <<EOL
+{
+    "cniVersion": "0.3.1",
+    "name": "bridge",
+    "type": "bridge",
+    "bridge": "cni0",
+    "isGateway": false,
+    "ipMasq": false,
+    "ipam": {
+        "type": "host-local",
+        "ranges": [
+          [{"subnet": "${POD_CIDR}"}]
+        ],
+        "routes": [{"dst": "0.0.0.0/0"}]
+    }
+}
+EOL
+
+cat > 99-loopback.conf <<EOL
+{
+    "cniVersion": "0.3.1",
+    "type": "loopback"
+}
+EOL
+mv 10-bridge.conf 99-loopback.conf /etc/cni/net.d/
 
 echo "CNI v${CNI_VERSION} downloaded successfully"
 
