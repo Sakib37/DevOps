@@ -33,3 +33,4 @@ tags
 # ignore temp_download directory
 
 temp_downloaded/*
+conf/config.json

@@ -8,7 +8,7 @@ Components, Tools and Versions
 
 |component  | version|
 | --------- |  -------- |
-|ubuntu | 16.04.3 |
+|ubuntu | 18.04 |
 |kubernetes | 1.12.2 |
 |docker | 1.17.03 |
 |etcd | 3.3.10 |
@@ -19,6 +19,7 @@ Components, Tools and Versions
 |weave net | 2.4.1 |
 |istio | 0.7.0|
 |cfssl | 1.3.2 |
+|go    | 1.11.2 |
 
 
 Required arguments

@@ -85,15 +85,15 @@ spec:
             - --dns-port=10053
             - --config-dir=/kube-dns-config
             - --v=2
-          livenessProbe:
-            httpGet:
-              path: /healthcheck/kubedns
-              port: 10054
-              scheme: HTTP
-            initialDelaySeconds: 60
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 5
+          #livenessProbe:
+          #  httpGet:
+          #    path: /healthcheck/kubedns
+          #    port: 10054
+          #    scheme: HTTP
+          #  initialDelaySeconds: 60
+          #  timeoutSeconds: 5
+          #  successThreshold: 1
+          #  failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /readiness
@@ -124,15 +124,15 @@ spec:
               mountPath: /kube-dns-config
         - name: dnsmasq
           image: k8s.gcr.io/k8s-dns-dnsmasq-nanny:1.14.13
-          livenessProbe:
-            httpGet:
-              path: /healthcheck/dnsmasq
-              port: 10054
-              scheme: HTTP
-            initialDelaySeconds: 60
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 5
+          #livenessProbe:
+          #  httpGet:
+          #    path: /healthcheck/dnsmasq
+          #    port: 10054
+          #    scheme: HTTP
+          #  initialDelaySeconds: 60
+          #  timeoutSeconds: 5
+          #  successThreshold: 1
+          #  failureThreshold: 5
           args:
             - -v=2
             - -logtostderr
@@ -168,16 +168,16 @@ spec:
             - --logtostderr
             - --probe=kubedns,127.0.0.1:10053,kubernetes.default.svc.cluster.local,5,SRV
             - --probe=dnsmasq,127.0.0.1:53,kubernetes.default.svccluster.local,5,SRV
-          livenessProbe:
-            failureThreshold: 5
-            httpGet:
-              path: /metrics
-              port: 10054
-              scheme: HTTP
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 5
+          #livenessProbe:
+          #  failureThreshold: 5
+          #  httpGet:
+          #    path: /metrics
+          #    port: 10054
+          #    scheme: HTTP
+          #  initialDelaySeconds: 60
+          #  periodSeconds: 10
+          #  successThreshold: 1
+          #  timeoutSeconds: 5
           ports:
             - name: metrics
               containerPort: 10054

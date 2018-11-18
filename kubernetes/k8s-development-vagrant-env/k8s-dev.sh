@@ -157,10 +157,10 @@ then
         #bin/configure-operators.sh
 
         echo "deploying monitoring infrastructure"
-        bin/configure-monitoring.sh
+        #bin/configure-monitoring.sh
 
         echo "deploying security infrastructure"
-        bin/configure-security.sh
+        #bin/configure-security.sh
 
         if [ "${K8S_ENABLE_ROOK_STORAGE}" = true ]
         then
