@@ -22,6 +22,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: system:kube-apiserver
+  namespace: ""
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -33,6 +34,15 @@ subjects:
   - apiGroup: rbac.authorization.k8s.io
     kind: User
     name: system:node:k8s-server-1
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: k8s-node-1
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: k8s-node-2
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: k8s-node-3
 
 ---
 

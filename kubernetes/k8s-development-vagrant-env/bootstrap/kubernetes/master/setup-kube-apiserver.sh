@@ -11,7 +11,7 @@ export KUBERNETES_SERVICE_NODE_PORT_RANGE=${4}
 export KUBERNETES_SERVICE_CLOUD_PROVIDER=${5}
 export KUBERNETES_SERVICE_ENABLE_POD_SECURITY_POLICY=${6}
 export KUBERNETES_SERVICE_ADMISSION_PLUGINS=Initializers,NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,PersistentVolumeClaimResize,AlwaysPullImages,PodPreset
-
+#
 # if pod security policy is set as enabled through the config file then add PodSecurityPolicy to list of admission plugins
 if [ "${KUBERNETES_SERVICE_ENABLE_POD_SECURITY_POLICY}" = true ]
 then

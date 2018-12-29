@@ -151,7 +151,7 @@ then
     if [ "${K8S_WORKER_COUNT}" -gt "0" ]
     then
         echo "configuring networking"
-        bin/configure-networking.sh
+        #bin/configure-networking.sh
 
         echo "deploying kubernetes operators"
         #bin/configure-operators.sh

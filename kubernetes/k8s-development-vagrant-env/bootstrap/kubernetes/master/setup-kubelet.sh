@@ -57,15 +57,12 @@ authorization:
   mode: Webhook
 clusterDomain: "cluster.local"
 clusterDNS:
-  - "${KUBERNETES_CLUSTER_DNS}"
-podCIDR: "${KUBELET_POD_CIDR}"
+  - "10.32.0.10"
+podCIDR: "${POD_CIDR}"
+resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
 tlsCertFile: "${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBELET_NODE_NAME}-kubelet.pem"
 tlsPrivateKeyFile: "${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBELET_NODE_NAME}-kubelet-key.pem"
-featureGates:
-    ExpandPersistentVolumes: true
-    TaintBasedEvictions: true
-    ExperimentalCriticalPodAnnotation: true
 EOL
 
 sudo tee /etc/systemd/system/kubelet.service  > /dev/null <<"EOL"
