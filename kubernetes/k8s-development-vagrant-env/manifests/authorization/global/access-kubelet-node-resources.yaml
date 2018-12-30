@@ -15,8 +15,8 @@ rules:
       - nodes/log
       - nodes/spec
       - nodes/metrics
-      - secrets
-      - secrets/*
+      #- secrets
+      #- secrets/*
     verbs:
       - "*"
 ---
@@ -37,15 +37,18 @@ subjects:
   - apiGroup: rbac.authorization.k8s.io
     kind: User
     name: k8s-server-1-apiserver # CN for kube-apiserver certificate for k8s-server-1
-  #- apiGroup: rbac.authorization.k8s.io
-  #  kind: User
-  #  name: k8s-server-1 # Server's kubelet use 'k8s-server-1' when communicating with api server
   - apiGroup: rbac.authorization.k8s.io
     kind: User
     name: k8s-server-2-apiserver # CN for kube-apiserver certificate for k8s-server-2
   - apiGroup: rbac.authorization.k8s.io
     kind: User
     name: k8s-server-3-apiserver # CN for kube-apiserver certificate for k8s-server-3
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: k8s-server-1 # Server's kubelet use 'k8s-server-1' when communicating with api server
+  #- apiGroup: rbac.authorization.k8s.io
+  #  kind: User
+  #  name: k8s-node-1 # Server's kubelet use 'k8s-server-1' when communicating with api server
   - apiGroup: rbac.authorization.k8s.io
     kind: Group
     name: system:nodes
@@ -74,7 +77,7 @@ subjects:
 #  apiGroup: rbac.authorization.k8s.io
 
 
----
+#---
 #apiVersion: rbac.authorization.k8s.io/v1
 #kind: ClusterRole
 #metadata:
@@ -108,20 +111,23 @@ subjects:
 #subjects:
 #  - apiGroup: rbac.authorization.k8s.io
 #    kind: User
-#    name: k8s-server-1-kube-proxy
-#  - apiGroup: rbac.authorization.k8s.io
-#    kind: User
-#    name: k8s-server-2-kube-proxy
-#  - apiGroup: rbac.authorization.k8s.io
-#    kind: User
-#    name: k8s-server-3-kube-proxy
-#  - apiGroup: rbac.authorization.k8s.io
-#    kind: User
-#    name: k8s-node-1-kube-proxy
-#  - apiGroup: rbac.authorization.k8s.io
-#    kind: User
-#    name: k8s-node-2-kube-proxy
-#  - apiGroup: rbac.authorization.k8s.io
-#    kind: User
-#    name: k8s-node-3-kube-proxy
+#    name: system:kube-proxy
+#  #- apiGroup: rbac.authorization.k8s.io
+#  #  kind: User
+#  #  name: k8s-server-2-kube-proxy
+#  #- apiGroup: rbac.authorization.k8s.io
+#  #  kind: User
+#  #  name: k8s-server-3-kube-proxy
+#  #- apiGroup: rbac.authorization.k8s.io
+#  #  kind: Group
+#  #  name: system:nodes
+#  #- apiGroup: rbac.authorization.k8s.io
+#  #  kind: User
+#  #  name: k8s-node-1-kube-proxy
+#  #- apiGroup: rbac.authorization.k8s.io
+#  #  kind: User
+#  #  name: k8s-node-2-kube-proxy
+#  #- apiGroup: rbac.authorization.k8s.io
+#  #  kind: User
+#  #  name: k8s-node-3-kube-proxy
 

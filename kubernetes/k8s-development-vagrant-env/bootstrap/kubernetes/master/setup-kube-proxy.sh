@@ -84,7 +84,6 @@ EOL
 
 #systemctl daemon-reload && systemctl enable kube-proxy.service && systemctl start kube-proxy.service
 
-
 echo "Kubernetes Kube Proxy v${KUBERNETES_PLATFORM_VERSION} configured successfully"
 
 exit 0
