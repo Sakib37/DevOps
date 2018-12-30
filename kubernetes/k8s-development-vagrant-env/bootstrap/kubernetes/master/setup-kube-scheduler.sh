@@ -22,7 +22,7 @@ sudo chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default
 
 sudo tee ${KUBE_SCHEDULER_CONFIGURATION} > /dev/null <<EOL
 kind: KubeSchedulerConfiguration
-apiVersion: componentconfig/v1alpha1
+apiVersion: kubescheduler.config.k8s.io/v1alpha1
 algorithmSource:
   provider: DefaultProvider
 clientConnection:

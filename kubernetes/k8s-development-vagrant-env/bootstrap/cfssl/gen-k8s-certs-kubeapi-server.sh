@@ -8,6 +8,7 @@ export GATEWAY_IP=${2}
 export GATEWAY_HOSTNAME=${3}
 export HOSTNAME=$(hostname)
 export IP_ADDRESSES=$(hostname -i)
+#export CERT_NAME=${HOSTNAME}-apiserver
 export CERT_NAME=${HOSTNAME}-apiserver
 
 # source the ubuntu global env file to make cfssl variables available to this session

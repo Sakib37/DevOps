@@ -31,14 +31,14 @@ cat - > ${CFSSL_TLS_GUEST_FOLDER}/kube-controller/${CERT_NAME}-csr.json <<EOF
 {
   "CN": "system:kube-controller-manager",
   "hosts": [
-    ${formatted_ip_addresses},
-    "127.0.0.1",
-    "10.0.2.2",
-    "localhost",
-    "${HOSTNAME}",
-    "${GATEWAY_IP}",
-    "${GATEWAY_HOSTNAME}"
-  ],
+      ${formatted_ip_addresses},
+      "127.0.0.1",
+      "10.0.2.2",
+      "localhost",
+      "${HOSTNAME}",
+      "${GATEWAY_IP}",
+      "${GATEWAY_HOSTNAME}"
+    ],
   "key": {
     "algo": "rsa",
     "size": 2048

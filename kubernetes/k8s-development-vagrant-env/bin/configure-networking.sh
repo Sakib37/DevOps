@@ -8,9 +8,9 @@ kubectl apply -f manifests/networking/weavenet/ | tee -a logs/manifests.log
 sleep 60
 
 # install kubedns for cluster dns
-kubectl apply -f manifests/networking/dns/ | tee -a logs/manifests.log
+kubectl apply -f manifests/networking/dns/core-dns.yaml | tee -a logs/manifests.log
 sleep 30
 
 # install kube-router in firewall mode to provide a complete implementation of kubernetes network policies
 #kubectl apply -f manifests/networking/kube-router/ | tee -a logs/manifests.log
-sleep 30
+#sleep 30

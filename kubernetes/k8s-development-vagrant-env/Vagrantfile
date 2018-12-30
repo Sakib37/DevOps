@@ -271,7 +271,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # configure and start kubernetes controller manager
       k8s_master_node.vm.provision "shell" do |s|
         s.path = "bootstrap/kubernetes/master/setup-kube-controller-manager.sh"
-        s.args = [conf['name'], conf['cluster_cidr'], conf['kubernetes_services_ip_range'], conf['cloud_provider']]
+        s.args = [conf['name'], conf['cluster_cidr'], conf['kubernetes_services_ip_range'], conf['cloud_provider'], conf['kubeconfig_folder']]
       end
 
       # configure and start kubernetes scheduler

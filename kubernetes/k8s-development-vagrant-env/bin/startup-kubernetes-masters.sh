@@ -26,6 +26,12 @@ systemctl enable kube-apiserver.service
 systemctl start kube-apiserver.service
 echo "done"
 
+while ! nc -z localhost 6443;
+do
+    echo "Waiting for api-server to be ready" ;
+    sleep 5;
+done
+
 # start kubernetes controller manager
 echo "starting up kubernetes controller manager"
 systemctl enable kube-controller-manager.service

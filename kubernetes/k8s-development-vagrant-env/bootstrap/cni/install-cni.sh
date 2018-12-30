@@ -41,8 +41,8 @@ cat > 10-bridge.conf <<EOL
     "name": "bridge",
     "type": "bridge",
     "bridge": "cni0",
-    "isGateway": false,
-    "ipMasq": false,
+    "isGateway": true,
+    "ipMasq": true,
     "ipam": {
         "type": "host-local",
         "ranges": [
@@ -56,6 +56,7 @@ EOL
 cat > 99-loopback.conf <<EOL
 {
     "cniVersion": "0.3.1",
+    "name": "lo",
     "type": "loopback"
 }
 EOL
