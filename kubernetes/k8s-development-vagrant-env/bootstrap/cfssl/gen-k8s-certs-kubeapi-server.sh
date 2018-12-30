@@ -8,6 +8,7 @@ export GATEWAY_IP=${2}
 export GATEWAY_HOSTNAME=${3}
 export HOSTNAME=$(hostname)
 export IP_ADDRESSES=$(hostname -i)
+#export CERT_NAME=${HOSTNAME}-apiserver
 export CERT_NAME=${HOSTNAME}-apiserver
 
 # source the ubuntu global env file to make cfssl variables available to this session
@@ -63,7 +64,11 @@ EOF
 
 # generate signed server certificate for kubernetes vm using the csr from above
 
-cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json -profile=client-server ${CFSSL_TLS_GUEST_FOLDER}/kube-api/${CERT_NAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/kube-api/${CERT_NAME}
+cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
+    -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem \
+    -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json \
+    -profile=kubernetes \
+    ${CFSSL_TLS_GUEST_FOLDER}/kube-api/${CERT_NAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/kube-api/${CERT_NAME}
 
 
 # verify generated server certificate

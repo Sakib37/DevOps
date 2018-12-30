@@ -59,6 +59,7 @@ clusterDomain: "cluster.local"
 clusterDNS:
   - "${KUBERNETES_CLUSTER_DNS}"
 podCIDR: "${KUBELET_POD_CIDR}"
+resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
 tlsCertFile: "${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBELET_NODE_NAME}-kubelet.pem"
 tlsPrivateKeyFile: "${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBELET_NODE_NAME}-kubelet-key.pem"

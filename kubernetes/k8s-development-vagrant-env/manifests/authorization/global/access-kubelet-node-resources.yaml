@@ -15,6 +15,8 @@ rules:
       - nodes/log
       - nodes/spec
       - nodes/metrics
+      - secrets
+      - secrets/*
     verbs:
       - "*"
 ---
@@ -22,70 +24,104 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: system:kube-apiserver
+  namespace: ""
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: system:kube-apiserver-to-kubelet
 subjects:
+  #- apiGroup: rbac.authorization.k8s.io
+  #  kind: User
+  #  name: kubernetes
+  # Note: if 'kubernetes' is the CN for api server certificate
   - apiGroup: rbac.authorization.k8s.io
     kind: User
-    name: k8s-server-1-apiserver
+    name: k8s-server-1-apiserver # CN for kube-apiserver certificate for k8s-server-1
+  #- apiGroup: rbac.authorization.k8s.io
+  #  kind: User
+  #  name: k8s-server-1 # Server's kubelet use 'k8s-server-1' when communicating with api server
   - apiGroup: rbac.authorization.k8s.io
     kind: User
-    name: k8s-server-2-apiserver
+    name: k8s-server-2-apiserver # CN for kube-apiserver certificate for k8s-server-2
   - apiGroup: rbac.authorization.k8s.io
     kind: User
-    name: k8s-server-3-apiserver
+    name: k8s-server-3-apiserver # CN for kube-apiserver certificate for k8s-server-3
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:nodes
+  # source: https://github.com/kelseyhightower/kubernetes-the-hard-way/issues/303#issuecomment-360581061
 
 ---
+## source: https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet-tls-bootstrapping/#authorize-kubelet-to-create-csr
+#apiVersion: rbac.authorization.k8s.io/v1
+#kind: ClusterRoleBinding
+#apiVersion: rbac.authorization.k8s.io/v1
+#metadata:
+#  name: create-csrs-for-bootstrapping
+#subjects:
+#- apiGroup: rbac.authorization.k8s.io
+#  kind: Group
+#  name: system:bootstrappers
+#- apiGroup: rbac.authorization.k8s.io
+#  kind: User
+#  name: k8s-server-1 # server's kubelet use this name to get secrets from api server
+#- apiGroup: rbac.authorization.k8s.io
+#  kind: Group
+#  name: system:nodes # Allow all workers in system:nodes group to get secrets from api server
+#roleRef:
+#  kind: ClusterRole
+#  name: system:node-bootstrapper
+#  apiGroup: rbac.authorization.k8s.io
 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  annotations:
-    rbac.authorization.kubernetes.io/autoupdate: "true"
-  labels:
-    kubernetes.io/bootstrapping: rbac-defaults
-  name: system:kube-proxy-to-kubelet
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - nodes
-      - nodes/proxy
-      - nodes/stats
-      - nodes/log
-      - nodes/spec
-      - nodes/metrics
-    verbs:
-      - "*"
 
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: system:kube-proxy
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: system:kube-proxy-to-kubelet
-subjects:
-  - apiGroup: rbac.authorization.k8s.io
-    kind: User
-    name: k8s-server-1-kube-proxy
-  - apiGroup: rbac.authorization.k8s.io
-    kind: User
-    name: k8s-server-2-kube-proxy
-  - apiGroup: rbac.authorization.k8s.io
-    kind: User
-    name: k8s-server-3-kube-proxy
-  - apiGroup: rbac.authorization.k8s.io
-    kind: User
-    name: k8s-node-1-kube-proxy
-  - apiGroup: rbac.authorization.k8s.io
-    kind: User
-    name: k8s-node-2-kube-proxy
-  - apiGroup: rbac.authorization.k8s.io
-    kind: User
-    name: k8s-node-3-kube-proxy
+#apiVersion: rbac.authorization.k8s.io/v1
+#kind: ClusterRole
+#metadata:
+#  annotations:
+#    rbac.authorization.kubernetes.io/autoupdate: "true"
+#  labels:
+#    kubernetes.io/bootstrapping: rbac-defaults
+#  name: system:kube-proxy-to-kubelet
+#rules:
+#  - apiGroups:
+#      - ""
+#    resources:
+#      - nodes
+#      - nodes/proxy
+#      - nodes/stats
+#      - nodes/log
+#      - nodes/spec
+#      - nodes/metrics
+#    verbs:
+#      - "*"
+#
+#---
+#apiVersion: rbac.authorization.k8s.io/v1
+#kind: ClusterRoleBinding
+#metadata:
+#  name: system:kube-proxy
+#roleRef:
+#  apiGroup: rbac.authorization.k8s.io
+#  kind: ClusterRole
+#  name: system:kube-proxy-to-kubelet
+#subjects:
+#  - apiGroup: rbac.authorization.k8s.io
+#    kind: User
+#    name: k8s-server-1-kube-proxy
+#  - apiGroup: rbac.authorization.k8s.io
+#    kind: User
+#    name: k8s-server-2-kube-proxy
+#  - apiGroup: rbac.authorization.k8s.io
+#    kind: User
+#    name: k8s-server-3-kube-proxy
+#  - apiGroup: rbac.authorization.k8s.io
+#    kind: User
+#    name: k8s-node-1-kube-proxy
+#  - apiGroup: rbac.authorization.k8s.io
+#    kind: User
+#    name: k8s-node-2-kube-proxy
+#  - apiGroup: rbac.authorization.k8s.io
+#    kind: User
+#    name: k8s-node-3-kube-proxy
 

@@ -11,7 +11,7 @@ export KUBERNETES_SERVICE_NODE_PORT_RANGE=${4}
 export KUBERNETES_SERVICE_CLOUD_PROVIDER=${5}
 export KUBERNETES_SERVICE_ENABLE_POD_SECURITY_POLICY=${6}
 export KUBERNETES_SERVICE_ADMISSION_PLUGINS=Initializers,NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,PersistentVolumeClaimResize,AlwaysPullImages,PodPreset
-
+#
 # if pod security policy is set as enabled through the config file then add PodSecurityPolicy to list of admission plugins
 if [ "${KUBERNETES_SERVICE_ENABLE_POD_SECURITY_POLICY}" = true ]
 then
@@ -36,7 +36,7 @@ KUBERNETES_SERVICE_ADMISSION_PLUGINS=${KUBERNETES_SERVICE_ADMISSION_PLUGINS}
 KUBERNETES_PLATFORM_USER=${KUBERNETES_PLATFORM_USER}
 KUBERNETES_PLATFORM_GROUP=${KUBERNETES_PLATFORM_USER}
 KUBERNETES_PLATFORM_HOME=${KUBERNETES_PLATFORM_HOME}
-ETCD_SERVERS=${ETCDCTL_ENDPOINT}
+ETCD_SERVERS=${ETCD_SERVERS}
 GOMAXPROCS=$(nproc)
 EOL
 
@@ -53,8 +53,8 @@ mkdir -p ${KUBERNETES_PLATFORM_HOME}/audit/logs
 
 chown -R ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} ${KUBERNETES_PLATFORM_HOME}/*
 
-# NOTE: "ETCDCTL_ENDPOINT" is already setup in /etc/environment by bootstrap/etcd/setup-etcd.sh.
-#        "--etcd-servers" below is same as "ETCDCTL_ENDPOINT" value
+# NOTE: "ETCD_SERVERS" is already setup in /etc/environment by bootstrap/etcd/setup-etcd.sh.
+#        "--etcd-servers" below is same as "ETCD_SERVERS" value
 
 cat > /etc/systemd/system/kube-apiserver.service <<"EOL"
 [Unit]
@@ -65,9 +65,6 @@ Documentation=https://github.com/kubernetes/kubernetes
 User=kubernetes
 EnvironmentFile=/etc/default/kube-apiserver.conf
 ExecStart=/usr/local/bin/kube-apiserver \
-    --cloud-provider=${KUBERNETES_SERVICE_CLOUD_PROVIDER} \
-    --enable-admission-plugins=${KUBERNETES_SERVICE_ADMISSION_PLUGINS} \
-    --feature-gates=ExpandPersistentVolumes=true,TaintBasedEvictions=true,ExperimentalCriticalPodAnnotation=true \
     --advertise-address=${KUBERNETES_SERVER_IP} \
     --allow-privileged=true \
     --apiserver-count=${KUBERNETES_SERVER_COUNT} \
@@ -77,8 +74,12 @@ ExecStart=/usr/local/bin/kube-apiserver \
     --audit-log-path=${KUBERNETES_PLATFORM_HOME}/audit/logs/audit.log \
     --audit-policy-file=/vagrant/conf/audit-policy.yaml \
     --authorization-mode=Node,RBAC \
+    --enable-bootstrap-token-auth=true \
     --bind-address=0.0.0.0 \
+    --cloud-provider=${KUBERNETES_SERVICE_CLOUD_PROVIDER} \
     --client-ca-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
+    --enable-admission-plugins=${KUBERNETES_SERVICE_ADMISSION_PLUGINS} \
+    --feature-gates=ExpandPersistentVolumes=true,TaintBasedEvictions=true,ExperimentalCriticalPodAnnotation=true \
     --enable-swagger-ui=true \
     --etcd-cafile=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     --etcd-certfile=${CFSSL_TLS_GUEST_FOLDER}/etcd/${KUBERNETES_SERVER_NAME}-client.pem \
@@ -87,8 +88,8 @@ ExecStart=/usr/local/bin/kube-apiserver \
     --event-ttl=15m \
     --experimental-encryption-provider-config=/vagrant/conf/data-encryption-config.yaml \
     --kubelet-certificate-authority=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
-    --kubelet-client-certificate=${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBERNETES_SERVER_NAME}-kubelet.pem \
-    --kubelet-client-key=${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBERNETES_SERVER_NAME}-kubelet-key.pem \
+    --kubelet-client-certificate=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver.pem \
+    --kubelet-client-key=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver-key.pem \
     --kubelet-https=true \
     --runtime-config=api/all,admissionregistration.k8s.io/v1beta1,admissionregistration.k8s.io/v1alpha1,settings.k8s.io/v1alpha1=true \
     --service-account-key-file=${CFSSL_TLS_GUEST_FOLDER}/service-accounts/service-accounts.pem \
@@ -98,9 +99,6 @@ ExecStart=/usr/local/bin/kube-apiserver \
     --tls-private-key-file=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver-key.pem \
     --requestheader-client-ca-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     --requestheader-allowed-names= \
-    --requestheader-extra-headers-prefix=X-Remote-Extra- \
-    --requestheader-group-headers=X-Remote-Group \
-    --requestheader-username-headers=X-Remote-User \
     --proxy-client-cert-file=${CFSSL_TLS_GUEST_FOLDER}/aggregator/aggregator.pem \
     --proxy-client-key-file=${CFSSL_TLS_GUEST_FOLDER}/aggregator/aggregator-key.pem \
     --enable-aggregator-routing=true \

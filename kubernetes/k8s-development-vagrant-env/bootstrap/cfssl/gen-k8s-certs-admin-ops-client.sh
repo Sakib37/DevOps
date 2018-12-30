@@ -45,7 +45,11 @@ EOF
 
 # generate signed client certificate for admin operator
 
-cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json -profile=client-server ${CFSSL_TLS_GUEST_FOLDER}/kubernetes/${CERT_NAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/kubernetes/${CERT_NAME}
+cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem  \
+    -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem \
+    -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json \
+    -profile=kubernetes \
+     ${CFSSL_TLS_GUEST_FOLDER}/kubernetes/${CERT_NAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/kubernetes/${CERT_NAME}
 
 
 # verify generated client certificate

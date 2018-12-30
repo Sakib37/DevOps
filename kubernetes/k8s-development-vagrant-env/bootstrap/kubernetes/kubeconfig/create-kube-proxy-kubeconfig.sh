@@ -25,7 +25,7 @@ kubectl config set-cluster ${KUBERNETES_CLUSTER_NAME} \
     --server=https://${KUBERNETES_SERVER_PROXY_IP}:6443 \
     --kubeconfig=${KUBECONFIG_FOLDER}/${HOSTNAME}/${HOSTNAME}-kube-proxy.kubeconfig
 
-kubectl config set-credentials kube-proxy \
+kubectl config set-credentials system:kube-proxy \
     --client-certificate=${CLIENT_CERT} \
     --client-key=${CLIENT_CERT_KEY} \
     --embed-certs=true \
@@ -33,7 +33,7 @@ kubectl config set-credentials kube-proxy \
 
 kubectl config set-context default \
     --cluster=${KUBERNETES_CLUSTER_NAME} \
-    --user=kube-proxy \
+    --user=system:kube-proxy \
     --kubeconfig=${KUBECONFIG_FOLDER}/${HOSTNAME}/${HOSTNAME}-kube-proxy.kubeconfig
 
 

@@ -29,15 +29,15 @@ done
 cat - > ${CFSSL_TLS_GUEST_FOLDER}/kube-scheduler/${CERT_NAME}-csr.json <<EOF
 {
   "CN": "system:kube-scheduler",
-  "hosts": [
-    ${formatted_ip_addresses},
-    "127.0.0.1",
-    "localhost",
-    "10.0.2.2",
-    "${HOSTNAME}",
-    "${GATEWAY_IP}",
-    "${GATEWAY_HOSTNAME}"
-  ],
+   "hosts": [
+      ${formatted_ip_addresses},
+      "127.0.0.1",
+      "localhost",
+      "10.0.2.2",
+      "${HOSTNAME}",
+      "${GATEWAY_IP}",
+      "${GATEWAY_HOSTNAME}"
+    ],
   "key": {
     "algo": "rsa",
     "size": 2048
@@ -57,7 +57,11 @@ EOF
 
 # generate signed kube-scheduler client certificates for the vm
 
-cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json -profile=client-server  ${CFSSL_TLS_GUEST_FOLDER}/kube-scheduler/${CERT_NAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/kube-scheduler/${CERT_NAME}
+cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
+    -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem \
+    -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json \
+    -profile=kubernetes \
+    ${CFSSL_TLS_GUEST_FOLDER}/kube-scheduler/${CERT_NAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/kube-scheduler/${CERT_NAME}
 
 
 # verify generated client certificate

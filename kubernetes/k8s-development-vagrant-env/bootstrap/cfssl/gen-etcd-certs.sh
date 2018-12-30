@@ -55,8 +55,17 @@ EOF
 
 # generate signed server certificate for etcd vm using the above csr
 
-cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json -profile=client-server ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-client
-cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json -profile=client-server ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-peer
+cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
+    -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem  \
+    -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json  \
+    -profile=kubernetes \
+    ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-client
+
+cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
+    -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem \
+    -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json \
+    -profile=kubernetes \
+    ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-peer
 
 # verify generated server certificates
 openssl x509 -noout -text -in ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-client.pem

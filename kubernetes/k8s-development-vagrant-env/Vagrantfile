@@ -178,7 +178,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # generate kube-proxy client certificates
       k8s_master_node.vm.provision "shell" do |s|
-        s.path = "bootstrap/cfssl/gen-k8s-certs-kubeproxy-client.sh"
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kube-proxy-client.sh"
         s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
       end
 
@@ -271,7 +271,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # configure and start kubernetes controller manager
       k8s_master_node.vm.provision "shell" do |s|
         s.path = "bootstrap/kubernetes/master/setup-kube-controller-manager.sh"
-        s.args = [conf['name'], conf['cluster_cidr'], conf['kubernetes_services_ip_range'], conf['cloud_provider']]
+        s.args = [conf['name'], conf['cluster_cidr'], conf['kubernetes_services_ip_range'], conf['cloud_provider'], conf['kubeconfig_folder']]
       end
 
       # configure and start kubernetes scheduler
@@ -424,7 +424,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # generate kube-proxy client certificates
       k8s_worker_node.vm.provision "shell" do |s|
-        s.path = "bootstrap/cfssl/gen-k8s-certs-kubeproxy-client.sh"
+        s.path = "bootstrap/cfssl/gen-k8s-certs-kube-proxy-client.sh"
         s.args = [conf['tls_guest_folder'], gatewayIp, gatewayHostname]
       end
 

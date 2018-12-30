@@ -103,7 +103,7 @@ then
     fi
     
     
-    mkdir -p logs tls disks  temp_downloaded
+    mkdir -p logs tls disks temp_downloaded conf/kubeconfig
 
     # start the vms in series
 	vagrant up --no-provision $MACHINE | tee logs/boot.log
@@ -151,7 +151,7 @@ then
     if [ "${K8S_WORKER_COUNT}" -gt "0" ]
     then
         echo "configuring networking"
-        bin/configure-networking.sh
+        #bin/configure-networking.sh
 
         echo "deploying kubernetes operators"
         #bin/configure-operators.sh

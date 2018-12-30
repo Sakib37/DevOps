@@ -8,6 +8,7 @@ export KUBERNETES_CLUSTER_NAME=${1}
 export KUBERNETES_CLUSTER_CIDR=${2}
 export KUBERNETES_SERVICE_CLUSTER_IP_RANGE=${3}
 export KUBERNETES_SERVICE_CLOUD_PROVIDER=${4}
+export KUBECONFIG_FOLDER=${5}
 
 sudo -E -s <<"EOF"
 
@@ -53,15 +54,10 @@ ExecStart=/usr/local/bin/kube-controller-manager \
     --cluster-signing-key-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem \
     --kubeconfig=/vagrant/conf/kubeconfig/${KUBERNETES_NODE_NAME}/${KUBERNETES_NODE_NAME}-kube-controller-manager.kubeconfig \
     --leader-elect=true \
-    --master=https://127.0.0.1:6443 \
     --root-ca-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     --service-account-private-key-file=${CFSSL_TLS_GUEST_FOLDER}/service-accounts/service-accounts-key.pem \
-    --client-ca-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
-    --tls-cert-file=${CFSSL_TLS_GUEST_FOLDER}/kube-controller/${KUBERNETES_NODE_NAME}-kube-controller-manager.pem \
-    --tls-private-key-file=${CFSSL_TLS_GUEST_FOLDER}/kube-controller/${KUBERNETES_NODE_NAME}-kube-controller-manager-key.pem \
     --authentication-kubeconfig=/vagrant/conf/kubeconfig/${KUBERNETES_NODE_NAME}/${KUBERNETES_NODE_NAME}-kube-controller-manager.kubeconfig \
     --authentication-skip-lookup=false \
-    --authorization-kubeconfig=/vagrant/conf/kubeconfig/${KUBERNETES_NODE_NAME}/${KUBERNETES_NODE_NAME}-kube-controller-manager.kubeconfig \
     --service-cluster-ip-range=${KUBERNETES_SERVICE_CLUSTER_IP_RANGE} \
     --horizontal-pod-autoscaler-sync-period=10s \
     --use-service-account-credentials=true \

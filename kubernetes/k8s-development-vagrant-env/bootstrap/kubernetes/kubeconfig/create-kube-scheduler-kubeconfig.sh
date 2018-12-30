@@ -25,7 +25,7 @@ kubectl config set-cluster ${KUBERNETES_CLUSTER_NAME} \
     --server=https://${KUBERNETES_SERVER_PROXY_IP}:6443 \
     --kubeconfig=${KUBECONFIG_FOLDER}/${HOSTNAME}/${HOSTNAME}-kube-scheduler.kubeconfig
 
-kubectl config set-credentials kube-scheduler \
+kubectl config set-credentials system:kube-scheduler \
     --client-certificate=${CLIENT_CERT}.pem \
     --client-key=${CLIENT_CERT_KEY}.pem \
     --embed-certs=true \
@@ -33,7 +33,7 @@ kubectl config set-credentials kube-scheduler \
 
 kubectl config set-context default \
     --cluster=${KUBERNETES_CLUSTER_NAME} \
-    --user=kube-scheduler \
+    --user=system:kube-scheduler \
     --kubeconfig=${KUBECONFIG_FOLDER}/${HOSTNAME}/${HOSTNAME}-kube-scheduler.kubeconfig
 
 kubectl config use-context default --kubeconfig=${KUBECONFIG_FOLDER}/${HOSTNAME}/${HOSTNAME}-kube-scheduler.kubeconfig
