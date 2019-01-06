@@ -18,7 +18,7 @@
     "ip_prefix": "10.0.0.10"
   },
   "workers": {
-    "count": 2,
+    "count": 3,
     "cpus": 2,
     "memory": 2048,
     "num_extra_disks": 2,
