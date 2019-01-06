@@ -4,7 +4,7 @@
   "auth": {
     "count": 0,
     "cpus": 1,
-    "memory": 1024,
+    "memory": 2048,
     "num_extra_disks": 0,
     "gb_per_disk": 0,
     "ip_prefix": "10.0.1.10"
@@ -18,11 +18,11 @@
     "ip_prefix": "10.0.0.10"
   },
   "workers": {
-    "count": 3,
+    "count": 2,
     "cpus": 2,
-    "memory": 2048,
+    "memory": 3072,
     "num_extra_disks": 2,
-    "gb_per_disk": 50,
+    "gb_per_disk": 10,
     "ip_prefix": "10.0.0.10"
   },
   "ip_prefix": "10.0.0.10",
@@ -38,6 +38,6 @@
   "enable_pod_security_policies": "false",
   "enable_network_policies": "false",
   "enable_service_mesh": "false",
-  "enable_rook_storage": "false",
+  "enable_rook_storage": "true",
   "enable_sample_apps": "false"
 }

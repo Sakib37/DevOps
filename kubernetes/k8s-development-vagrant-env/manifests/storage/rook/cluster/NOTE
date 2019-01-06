@@ -1,0 +1,5 @@
+In rook-cluster.yaml file the CephCluster should be updated for vagrant. For vagrant hostnetwork should be set to true.
+
+network:
+    # toggle to use hostNetwork
+    hostNetwork: true

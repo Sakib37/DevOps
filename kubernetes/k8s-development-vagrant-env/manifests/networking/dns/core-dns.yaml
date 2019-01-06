@@ -18,6 +18,7 @@ rules:
   - services
   - pods
   - namespaces
+  - secrets
   verbs:
   - list
   - watch

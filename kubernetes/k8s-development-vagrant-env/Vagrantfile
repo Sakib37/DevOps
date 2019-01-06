@@ -103,6 +103,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         s.args = [vm_ip]
       end
 
+      # Install socat
+      k8s_master_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/socat/install_socat.sh"
+        s.args = [vm_ip]
+      end
+
       # Install Golang
       k8s_master_node.vm.provision "shell" do |s|
         s.path = "bootstrap/golang/install-golang.sh"
@@ -395,6 +401,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # Install ntpd
       k8s_worker_node.vm.provision "shell" do |s|
         s.path = "bootstrap/ntpd/install-ntpd.sh"
+        s.args = [vm_ip]
+      end
+
+
+      # Install socat
+      k8s_worker_node.vm.provision "shell" do |s|
+        s.path = "bootstrap/socat/install_socat.sh"
         s.args = [vm_ip]
       end
 
