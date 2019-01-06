@@ -20,7 +20,7 @@ kubectl apply -f manifests/storage/rook/cluster/ceph-pool.yaml | tee -a logs/man
 kubectl apply -f manifests/storage/rook/cluster/rook-storageclass.yaml | tee -a logs/manifests.log
 
 # install rook tools
-kubectl apply -f manifests/storage/rook/cluster/rook-toolbox.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/storage/rook/cluster/rook-toolbox.yaml | tee -a logs/manifests.log
 
 # install rook prometheus' monitoring stack
 kubectl apply -f manifests/storage/rook/monitoring/prometheus/prometheus.yaml | tee -a logs/manifests.log
