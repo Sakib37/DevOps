@@ -6,19 +6,21 @@ export KUBECONFIG=conf/kubeconfig/admin.kubeconfig
 kubectl apply -f manifests/storage/rook/cluster/ceph-operator.yaml | tee -a logs/manifests.log
 sleep 60
 
-# install ceph pool
-#kubectl apply -f manifests/storage/rook/cluster/ceph-pool.yaml | tee -a logs/manifests.log
-#sleep 60
-
 # install rook cluster
 kubectl apply -f manifests/storage/rook/cluster/rook-cluster.yaml | tee -a logs/manifests.log
 sleep 30
 
+# install ceph pool
+kubectl apply -f manifests/storage/rook/cluster/ceph-pool.yaml | tee -a logs/manifests.log
+#sleep 60
+
+
+
 # install rook storage class into kubernetes
-#kubectl apply -f manifests/storage/rook/cluster/rook-storageclass.yaml | tee -a logs/manifests.log
+kubectl apply -f manifests/storage/rook/cluster/rook-storageclass.yaml | tee -a logs/manifests.log
 
 # install rook tools
-kubectl apply -f manifests/storage/rook/cluster/rook-tools.yaml | tee -a logs/manifests.log
+kubectl apply -f manifests/storage/rook/cluster/rook-toolbox.yaml | tee -a logs/manifests.log
 
 # install rook prometheus' monitoring stack
 kubectl apply -f manifests/storage/rook/monitoring/prometheus/prometheus.yaml | tee -a logs/manifests.log

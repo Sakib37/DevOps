@@ -6,13 +6,14 @@ set -xe
 source /etc/environment
 
 
-sudo -E -s -- << EOF
 
-export IMAGE_NAME_LIST=$(docker images | sed -n '1!p' | awk  '{print $1}' |  rev | cut -d '/' -f1 | rev)
-export IMAGES_LIST=$(docker images | sed -n '1!p' | awk  '{print $1}' )
+export IMAGE_NAME_LIST=$(sudo docker images | sed -n '1!p' | awk  '{print $1}' |  rev | cut -d '/' -f1 | rev)
+export IMAGES_LIST=$(sudo docker images | sed -n '1!p' | awk  '{print $1}' )
 export DOCKER_IMAGE_DIR=/vagrant/temp_downloaded/docker-images
 
-mkdir -p "${DOCKER_IMAGE_DIR}"
+echo ${DOCKER_IMAGE_DIR}
+
+mkdir -p ${DOCKER_IMAGE_DIR} || true
 
 
 # Save docker images to "/vagrant/temp_downloaded/docker-images"
@@ -23,7 +24,7 @@ do
     if ! [ -f ${DOCKER_IMAGE_DIR}/${IMAGE_NAME}.tar ]
     then
         echo "Saving docker image ${IMAGE_NAME}"
-        docker save -o ${DOCKER_IMAGE_DIR}/${IMAGE_NAME}.tar  ${image}  > /dev/null 2>&1
+        sudo docker save -o ${DOCKER_IMAGE_DIR}/${IMAGE_NAME}.tar  ${image}  > /dev/null 2>&1
     fi
 done
 
@@ -33,10 +34,10 @@ DOCKER_IMAGE_DIR=/vagrant/temp_downloaded/docker-images
 # Load all the docker images from previously saved images "/vagrant/temp_downloaded/docker-images"
 for image_tar in ${DOCKER_IMAGE_DIR}/*
 do
-     docker load -i ${image_tar}  > /dev/null 2>&1 &
+     sudo docker load -i ${image_tar}  > /dev/null 2>&1 &
 done
 
-EOF
+
 sleep 5
 
 exit 0

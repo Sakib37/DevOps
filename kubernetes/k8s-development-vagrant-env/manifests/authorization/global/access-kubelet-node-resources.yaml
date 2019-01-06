@@ -15,8 +15,9 @@ rules:
       - nodes/log
       - nodes/spec
       - nodes/metrics
-      #- secrets
-      #- secrets/*
+      - nodes/status
+      - secrets
+      - secrets/*
     verbs:
       - "*"
 ---
