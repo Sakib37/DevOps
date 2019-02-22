@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-config
+  namespace: vault
+data:
+  VAULT_AWS_REGION: "${AWS_REGION}"
+  VAULT_DYNAMODB_TABLE_NAME: "${DYNAMO_BACKEND_TABLE}"
+  VAULT_CLUSTER_NAME: "${NAME_OF_VAULT_CLUSTER}"
+  VAULT_KMS_KEY_ID: "${AUTO_UNSEAL_KMS_KEY"
+  VAULT_KMS_VPC_ENDPOINT: "${KMS_VPC_ENDPOINT}"
+  VAULT_S3_BUCKET_NAME: "${S3_BUCKET_TO_STORE_UNSEAL_KEYS}"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-token-manager
+  namespace: vault
+data:
+  token-manager.sh: |+
+    #!/bin/sh
+
+    while [ ! -f /vault-token/vault-token-key ] ;
+    do
+       echo "Waiting for vault initilization ..."
+       sleep 2
+    done
+
+    cd /vault-token
+    export MAIN_FILE=/vault-token/vault-token-key
+
+
+    if [ -s ${MAIN_FILE} ]; then
+        # Get vault unseal keys
+        cat ${MAIN_FILE} | grep "^Recovery.*[:]" > /vault-token/Unseal_keys
+        echo "Encrypting and Updoading unseal keys to s3 bucket "
+        aws kms encrypt --key-id ${VAULT_KMS_KEY_ID} --plaintext fileb://Unseal_keys  \
+                                        --query CiphertextBlob --output  text | base64 -d  > Unseal_keys.enc
+        aws s3 cp Unseal_keys.enc s3://${VAULT_S3_BUCKET_NAME} --sse aws:kms  \
+                                        --sse-kms-key-id ${VAULT_KMS_KEY_ID}
+        if [ $? -eq 0 ]; then
+            echo "Successfully moved unseal keys to bucket. Removing unseal keys from pod"
+            rm Unseal_keys*
+        else
+            echo "Failed to moved unseal keys to bucket"
+            exit  100
+        fi
+
+
+        # Get vault root token
+        cat ${MAIN_FILE} | grep "Root.*[:]" | awk -F ':' '{print $2}'  | xargs > /vault-token/root_token
+        echo "Encrypting and Updoading root token to s3 bucket "
+        aws kms encrypt --key-id ${VAULT_KMS_KEY_ID} --plaintext fileb://root_token    \
+                                        --query CiphertextBlob --output  text | base64 -d  > root_token.enc
+        aws s3 cp root_token.enc  s3://${VAULT_S3_BUCKET_NAME} --sse aws:kms   \
+                                        --sse-kms-key-id ${VAULT_KMS_KEY_ID}
+        if [ $? -eq 0 ]; then
+            echo "Successfully moved root token to bucket. Removing root token from pod"
+            rm root_token*
+        else
+            echo "Failed to moved root token to bucket"
+            exit  100
+        fi
+
+    fi
+
+    tail -f /dev/null
+
+

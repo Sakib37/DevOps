@@ -1,0 +1,19 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: vault-certificate
+  namespace: vault
+spec:
+  secretName: vault-tls
+  dnsNames:
+  - "${VAULT_ENDPOINT}"
+  acme:
+    config:
+      - dns01:
+          provider: route53
+        domains:
+          - "${VAULT_ENDPOINT}"
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+

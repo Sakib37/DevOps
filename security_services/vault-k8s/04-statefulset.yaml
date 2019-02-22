@@ -1,0 +1,199 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vault
+  namespace: vault
+  labels:
+    app: vault
+spec:
+  serviceName: "vault"
+  selector:
+    matchLabels:
+      app: vault
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: vault
+      annotations:
+        iam.amazonaws.com/role: ${VAULT_IAM_ROLE_ARN}
+    spec:
+      serviceAccountName: vault
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - vault
+              topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                 matchExpressions:
+                   - key: app
+                     operator: In
+                     values:
+                       - vault
+              topologyKey: failure-domain.beta.kubernetes.io/zone
+      initContainers:
+        - name: config
+          image: busybox
+          env:
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_AWS_REGION
+            - name: DYNAMODB_TABLE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_DYNAMODB_TABLE_NAME
+            - name: CLUSTER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_CLUSTER_NAME
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              cat > /etc/vault/config/vault.hcl <<EOF
+              cluster_name= "${CLUSTER_NAME}"
+              max_lease_ttl = "768h"
+              default_lease_ttl = "768h"
+
+              disable_clustering = "False"
+
+              listener "tcp" {
+                address = "0.0.0.0:8200"
+                tls_cert_file = "/etc/vault/tls/tls.crt"
+                tls_key_file = "/etc/vault/tls/tls.key"
+                tls_min_version = "tls12"
+              }
+
+              storage "dynamodb" {
+                ha_enabled = "True"
+                region = "${AWS_REGION}"
+                table = "${DYNAMODB_TABLE_NAME}"
+                read_capacity = "10"
+                write_capacity = "5"
+              }
+
+              seal "awskms" {
+              }
+
+              ui = true
+              EOF
+          volumeMounts:
+            - name: vault-config
+              mountPath: /etc/vault/config
+      containers:
+        - name: token-manager
+          image: accso/docker-awscli
+          env:
+            - name: VAULT_KMS_KEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_KMS_KEY_ID
+            - name: VAULT_S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_S3_BUCKET_NAME
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_AWS_REGION
+          volumeMounts:
+            - name: vault-token
+              mountPath: /vault-token
+            - name: vault-token-manager
+              mountPath: /vault-token-manager
+          command:
+            - "/bin/bash"
+            - "/vault-token-manager/token-manager.sh"
+        - name: vault
+          image: "vault:1.0.3"
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: "status.podIP"
+            - name: VAULT_API_ADDR
+              value: "https://${VAULT_ENDPOINT}"
+            - name: VAULT_CLUSTER_ADDR
+              value: "https://$(POD_IP):8201"
+            - name: VAULT_ADDR
+              value: "https://$(POD_IP):8200"
+            - name:  VAULT_SKIP_VERIFY
+              value: "1"
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_AWS_REGION
+            - name: VAULT_AWSKMS_SEAL_KEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_KMS_KEY_ID
+            - name: AWS_KMS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: vault-config
+                  key: VAULT_KMS_VPC_ENDPOINT
+          args:
+            - "server"
+            - "-config=/etc/vault/config/vault.hcl"
+            - "-log-level=debug"
+          ports:
+            - name: http
+              containerPort: 8200
+              protocol: "TCP"
+            - name: server
+              containerPort: 8201
+              protocol: "TCP"
+          readinessProbe:
+            httpGet:
+              path: "/v1/sys/health?standbyok=true"
+              port: 8200
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "200Mi"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "/bin/sh"
+                  - "-c"
+                  - "sleep 5  &&  \
+                         vault operator init | grep \": [A-Za-z0-9+(?<=).+\\/]*$\" > /vault-token/vault-token-key || true"
+          securityContext:
+            capabilities:
+              add:
+                - IPC_LOCK
+          volumeMounts:
+            - name: vault-config
+              mountPath: /etc/vault/config
+            - name: vault-tls
+              mountPath: /etc/vault/tls
+            - name: vault-token
+              mountPath: /vault-token
+      volumes:
+        - name: vault-config
+          emptyDir: {}
+        - name: vault-token
+          emptyDir: {}
+        - name: vault-tls
+          secret:
+            secretName: vault-tls
+        - name: vault-token-manager
+          configMap:
+            name: vault-token-manager

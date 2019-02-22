@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+  namespace: vault
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
+    external-dns.alpha.kubernetes.io/public: "true"
+    external-dns.alpha.kubernetes.io/private: "true"
+    external-dns.alpha.kubernetes.io/hostname: "${VAULT_ENDPOINT}"
+    external-dns.alpha.kubernetes.io/ttl: "60"
+spec:
+  type: LoadBalancer
+  loadBalancerSourceRanges:
+    # Update this with your ip range
+    - 10.0.0.0/8
+  selector:
+    app: vault
+  ports:
+    - name: server
+      port: 443
+      targetPort: 8200
+    - name: cluster
+      port: 8201
