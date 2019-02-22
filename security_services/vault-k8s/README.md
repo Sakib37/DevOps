@@ -14,14 +14,14 @@ Steps by step:
 
 ###AWS setup 
 
-
 2. Create a dynamodb table that will be used by vault as storage backend. Enable point-in-time 
    recovery for dynamodb. Change "Capacity" of Dynamodb table to adjust with vault configuration. 
    Update "VAULT_DYNAMODB_TABLE_NAME" value in 01-configmap.yaml
    
 3. Create a KMS key for vault auto unsealing and allow only vault IAM role to access the key.
    Create an IAM policy for vault as below. Update Dynamo table name, S3 bucket name and KMS key id
-    
+
+
     ```json
     {
         "Version": "2012-10-17",
@@ -73,6 +73,7 @@ Steps by step:
     ```
 
 
+
 ###Kubernetes deployment 
 
 1. First, we have to create TLS certificate for vault endpoint. The first file 
@@ -121,5 +122,3 @@ that points the Loadbalancer for vault service.
     the value for *loadBalancerSourceRanges* in this file according to your requirement. 
     
     ```kubectl apply -f 03-service.yaml```
-     
-5. 
