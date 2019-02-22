@@ -25,7 +25,7 @@ Components, Tools and Versions
 Required arguments
 ------------------------
 
-To run the CLI, kupa, the following arguments are needed
+To run the CLI, k8s-dev, the following arguments are needed
 
 ```bash
 	--help              Show this message
@@ -45,86 +45,86 @@ Usage
 -------------------
 
 ```bash
-	kupa [--help] [--hosts] [--testplan] [ [--machine] [ --start | --restart | --shutdown | --terminate | --status | --sssh ] ]
+	k8s-dev [--help] [--hosts] [--testplan] [ [--machine] [ --start | --restart | --shutdown | --terminate | --status | --sssh ] ]
 ```
 
 
 ###### Print help
 
 ```bash
-	kupa --help
+	k8s-dev --help
 ```
 
 ###### Print IP information for all vagrant instances in the Kubernetes Platform Environment
 
 ```bash
-	kupa --hosts
+	k8s-dev --hosts
 ```
 
 ###### Start the Kubernetes Platform Environment
 
 ```bash
-	kupa --start
+	k8s-dev --start
 ```
 
 ###### Start a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	kupa --machine=foo --start
+	k8s-dev --machine=foo --start
 ```
 
 ###### Restart the Kubernetes Platform Environment
 
 ```bash
-	kupa --restart
+	k8s-dev --restart
 ```
 
 ###### Restart a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	kupa --machine=foo --restart
+	k8s-dev --machine=foo --restart
 ```
 
 ###### Shutdown the Kubernetes Platform Environment
 
 ```bash
-	kupa --shutdown
+	k8s-dev --shutdown
 ```
 
 ###### Shutdown a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	kupa --machine=foo --shutdown
+	k8s-dev --machine=foo --shutdown
 ```
 
 ###### Terminate the Kubernetes Platform Environment
 
 ```bash
-	kupa --terminate
+	k8s-dev --terminate
 ```
 
 ###### Terminate a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	kupa --machine=foo --terminate
+	k8s-dev --machine=foo --terminate
 ```
 
 ###### Display the status of all machines in the Kubernetes Platform Environment
 
 ```bash
-	kupa --status
+	k8s-dev --status
 ```
 
 ###### Display the status of a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	kupa --machine=foo --status
+	k8s-dev --machine=foo --status
 ```
 
 ###### SSH into a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	kupa --machine=foo --ssh
+	k8s-dev --machine=foo --ssh
 ```
 
 ## Configure the Kubernetes CLI
