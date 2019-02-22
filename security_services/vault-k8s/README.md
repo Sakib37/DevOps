@@ -12,7 +12,8 @@ However, after updating some variables in the yaml files in this repository, vau
 Steps by step:
 ===============
 
-###AWS setup 
+AWS setup 
+---------
 
 2. Create a dynamodb table that will be used by vault as storage backend. Enable point-in-time 
    recovery for dynamodb. Change "Capacity" of Dynamodb table to adjust with vault configuration. 
@@ -74,7 +75,8 @@ Steps by step:
 
 
 
-###Kubernetes deployment 
+Kubernetes deployment 
+----------------------
 
 1. First, we have to create TLS certificate for vault endpoint. The first file 
 *"00-certificate.yaml"* creates a secret named *vault-tls* in the cluster which contains
