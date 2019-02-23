@@ -124,3 +124,24 @@ that points the Loadbalancer for vault service.
     the value for **loadBalancerSourceRanges** in this file according to your requirement. 
     
     ```kubectl apply -f 03-service.yaml```
+    
+    Before creating the vault StatefulSet, make sure that the vault endpoint is already resolvable 
+    
+    ```nslookup $YOUR_VAULT_ENDPOINT```
+    
+5. Now we are ready to deploy a vault cluster. **04-statefulset.yaml** deploys a StatefulSet with 3 replicas i.e. 3 node
+vault cluster. [This](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/04-statefulset.yaml#L19)
+annotation is used by [kube2iam]() which ensures that vault pod can get AWS token to make relevant requests to AWS api. 
+However, if you are not using **kube2iam**, make sure that vault pod can access necessary cloud resources(Ex- DynamoDB table,
+S3bucket, KMS keys etc.). The [affinity](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/04-statefulset.yaml#L22-L38)
+configuration ensures that vault pods are scheduled in different k8s node and different availability zones. You can comment
+or modify the **podAntiAffinity** based on your requirement. Vault server configuration is represented by [this](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/04-statefulset.yaml#L62-L86)
+section. This vault server configuration uses DynamoDB as vault backend. If you want to use different backend for vault, 
+update this vault configuration section based on your backend. 
+
+    There are two containers ([token-manager](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/04-statefulset.yaml#L92-L117)
+    and [vault](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/04-statefulset.yaml#L118-L188))
+    in a pod. The **vault** container runs a vault server. The **${VAULT_ENDPOINT}** variable should be replaced by your
+    vault endpoint name in the [configuration](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/04-statefulset.yaml#L126).
+    The **token-manager** container is simply a container with AWS CLI. After vault operator is initialized, the auto unsealing
+    script runs inside this container and copy unsealing keys and root token to the S3 bucket. 
