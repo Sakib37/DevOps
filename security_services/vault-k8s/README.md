@@ -4,10 +4,8 @@ unseal keys and vault root token in a predefined S3 bucket. In this project, onl
 cloud platform is used. However, by doing simple modification it can also
 be used for other cloud platforms as well. 
 
-Deploying a secure vault cluster in k8s with auto unsealing feature is a bit tricky job. 
-However, after updating some variables in the yaml files in this repository, vault can be deployed simply by running
-
-```kubectl apply -f vault-k8s/``` 
+Deploying a secure vault cluster in k8s with auto unsealing feature is a bit tricky job. The following section describes
+AWS setup and Kubernetes deployment process in step by step.  
 
 Steps by step:
 ===============
@@ -15,12 +13,19 @@ Steps by step:
 AWS setup 
 ---------
 
-2. Create a dynamodb table that will be used by vault as storage backend. Enable point-in-time 
-   recovery for dynamodb. Change "Capacity" of Dynamodb table to adjust with vault configuration. 
-   Update "VAULT_DYNAMODB_TABLE_NAME" value in 01-configmap.yaml
+1. Create a DynamoDB table with Primary partition key **Path** and Primary sort key	**Key** that will be used by vault 
+   as storage backend. Enable point-in-time recovery for DynamoDB. Change "Capacity" (read and write unit) of DynamoDB 
+   table to adjust with vault [configuration](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/04-statefulset.yaml#L79-L80). 
+   Update "VAULT_DYNAMODB_TABLE_NAME" value in [01-configmap.yaml](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/01-configmap.yaml#L8)
    
-3. Create a KMS key for vault auto unsealing and allow only vault IAM role to access the key.
-   Create an IAM policy for vault as below. Update Dynamo table name, S3 bucket name and KMS key id
+   
+2. Create a S3 bucket where vault unseal keys and root token will be stored. 
+
+3. Create and IAM role for vault. After that, create a KMS key for vault auto unsealing and allow only vault IAM role 
+   to access the KMS key. 
+   
+4. Create an IAM policy for vault as below and attach this policy to the vault IAM role. Before creating the policy update
+   the resource arns in the following policy document. 
 
 
     ```json
@@ -52,10 +57,10 @@ AWS setup
             },
             {
                 "Effect": "Allow",
-                "Action": "s3:**",
+                "Action": "s3:*",
                 "Resource": [
                     "arn:aws:s3:::S3_BUCKET_NAME",
-                    "arn:aws:s3:::S3_BUCKET_NAME/**"
+                    "arn:aws:s3:::S3_BUCKET_NAME/*"
                 ]
             },
             {
@@ -73,7 +78,13 @@ AWS setup
     }
     ```
 
-
+5. Create a VPC Endpint for your AWS VPC according to [this doc](https://docs.aws.amazon.com/kms/latest/developerguide/kms-vpc-endpoint.html)
+   Make sure that the subnets configured in this VPC endpoint are the subnets where vault pods will be deployed. Otherwise,
+   vault pods will not be able to access this VPC endpoint and auto unsealing will not work. Also make sure that the security
+   group for this VPC endpoint allows inbound port 443. 
+   
+6. All the variables value in configmap **[vault-config](01-configmap.yaml#L7-L12)** should be replaced by proper values of the resources created in
+   the above steps
 
 Kubernetes deployment 
 ----------------------
