@@ -25,7 +25,7 @@ AWS setup
    to access the KMS key. 
    
 4. Create an IAM policy for vault as below and attach this policy to the vault IAM role. Before creating the policy update
-   the resource arns in the following policy document. 
+   the resource arns in the following policy document with your resource arns.
 
 
     ```json
