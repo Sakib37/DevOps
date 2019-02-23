@@ -136,7 +136,8 @@ that points the Loadbalancer for vault service.
     
     ```kubectl apply -f 03-service.yaml```
     
-    Before creating the vault StatefulSet, make sure that the vault endpoint is already resolvable 
+    Before creating the vault StatefulSet, make sure that the vault endpoint is already resolvable. The default time 
+    in route53 for a new domain to be resolvable is 300s. So, it will require some patience for the domain to be resolvable.
     
     ```nslookup $YOUR_VAULT_ENDPOINT```
     
