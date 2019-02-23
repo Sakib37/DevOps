@@ -155,3 +155,42 @@ update this vault configuration section based on your backend.
     vault endpoint name in the [configuration](04-statefulset.yaml#L126). The **token-manager** container is simply a 
     container with AWS CLI. After vault operator is initialized, the auto unsealing script runs inside this container 
     and copy unsealing keys and root token to the S3 bucket. 
+
+
+Get Unseal keys and root token 
+------------------------------
+After vault is deployed and auto unsealed, the unseal keys and root tokens get stored in the predefined S3 bucket. Now, 
+configure AWS CLI and run the following commands to get the unseal keys and root token for vault. 
+
+```console
+export BUCKET_NAME=YOUR_S3_BUCKET_NAME
+export KMS_KEY_ID=YOUR_KMS_KEY_ID
+
+aws s3 cp s3://$BUCKET_NAME/Unseal_keys.enc ./Unseal_keys.tmp \
+                    --sse-kms-key-id  $KMS_KEY_ID
+UNSEAL_KEYS=$(aws kms decrypt --ciphertext-blob fileb://Unseal_keys.tmp  --output text --query Plaintext | base64 --decode)
+echo "Unseal Keys : "
+echo "${UNSEAL_KEYS}"
+
+rm ./Unseal_keys.tmp
+
+aws s3 cp s3://$BUCKET_NAME/root_token.enc ./root_token.tmp \
+                    --sse-kms-key-id  $KMS_KEY_ID
+ROOT_TOKEN=$(aws kms decrypt --ciphertext-blob fileb://root_token.tmp  --output text --query Plaintext | base64 --decode)
+echo "Root token : ${ROOT_TOKEN}"
+rm ./root_token.tmp
+```
+
+Login to vault:
+---------------
+Now we can use the root token from above step to login to vault. However, it is not a good practice to use root token to
+login to vault. Use this root token to create an admin token and then use the admin token to configure and management of 
+vault. Update the variable value and run the following command 
+
+```
+export VAULT_ADDR=https://YOUR_VAULT_ENDPOINT
+vault status
+
+ROOT_TOKEN=YOUR_VAULT_ROOT_TOKEN
+vault login ${ROOT_TOKEN}
+```
