@@ -13,10 +13,10 @@ Steps by step:
 AWS setup 
 ---------
 
-1. Create a DynamoDB table with Primary partition key **Path** and Primary sort key	**Key** that will be used by vault 
+1. Create a DynamoDB table with Primary partition key **"Path"** and Primary sort key	**"Key"** that will be used by vault 
    as storage backend. Enable point-in-time recovery for DynamoDB. Change "Capacity" (read and write unit) of DynamoDB 
-   table to adjust with vault [configuration](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/04-statefulset.yaml#L79-L80). 
-   Update "VAULT_DYNAMODB_TABLE_NAME" value in [01-configmap.yaml](https://github.com/Sakib37/DevOps/blob/master/security_services/vault-k8s/01-configmap.yaml#L8)
+   table to adjust with vault [configuration](04-statefulset.yaml#L79-L80). Update **"VAULT_DYNAMODB_TABLE_NAME"** value 
+   in [01-configmap.yaml](01-configmap.yaml#L8)
    
    
 2. Create a S3 bucket where vault unseal keys and root token will be stored. 
