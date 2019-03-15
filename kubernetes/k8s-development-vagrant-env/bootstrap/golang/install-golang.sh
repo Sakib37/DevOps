@@ -13,7 +13,7 @@ source /etc/environment
 mkdir -p /home/vagrant/go/{bin,src,pkg}
 
 # Change the version number according to your requirement
-GOLANG_VERSION=1.11.2
+GOLANG_VERSION=1.12.1
 GOROOT=/usr/local/go
 GOPATH=/home/vagrant/go
 GOBIN=${GOPATH}/bin
