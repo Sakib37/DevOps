@@ -2,14 +2,12 @@
 
 set -xe
 
+
+#source: http://docs.ceph.com/docs/mimic/install/get-packages/
 wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
 
-#echo deb https://download.ceph.com/debian-mimic/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
-echo deb https://download.ceph.com/debian-{ceph-stable-release}/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
+#sudo apt-add-repository 'deb https://download.ceph.com/debian-nautilus/ $(lsb_release -sc) main' || true
+echo deb https://download.ceph.com/debian-luminous/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 
-sudo apt update
-sudo apt install ceph-deploy -y
-
-
-
-
+sudo apt update || true
+sudo apt install ceph-deploy -y || true

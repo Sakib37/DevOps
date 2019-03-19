@@ -25,7 +25,7 @@ done
 kubectl apply -f manifests/storage/rook/cluster/rook-cluster.yaml | tee -a logs/manifests.log
 sleep 30
 
-echo "Waiting for rook-cluster to be ready. Be patient, it take 15-30 min ..."
+echo "Waiting for rook-cluster to be ready. Be patient, it takes 15-30 min ..."
 while true
 do
     osd_available=$(kubectl get deployments -n rook-ceph | grep rook-ceph-osd-1 | awk '{print $4}')
@@ -52,12 +52,12 @@ kubectl apply -f manifests/storage/rook/cluster/rook-storageclass.yaml | tee -a 
 kubectl apply -f manifests/storage/rook/cluster/rook-toolbox.yaml | tee -a logs/manifests.log
 
 # install rook prometheus' monitoring stack
-kubectl apply -f manifests/storage/rook/monitoring/prometheus/prometheus.yaml | tee -a logs/manifests.log
-sleep 30
+#kubectl apply -f manifests/storage/rook/monitoring/prometheus/prometheus.yaml | tee -a logs/manifests.log
+#sleep 30
 
 
 #kubectl apply -f manifests/deployments/production/storage/ | tee -a logs/manifests.log
-sleep 60
+#sleep 60
 
 
 #kubectl delete -f manifests/storage/rook/monitoring/prometheus/prometheus.yaml
