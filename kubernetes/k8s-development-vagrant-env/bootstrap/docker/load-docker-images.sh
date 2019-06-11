@@ -5,13 +5,12 @@ set -xe
 # source the ubuntu global env file to make docker-engine variables available to this session
 source /etc/environment
 
-
+yes | sudo docker image prune -a
 
 export IMAGE_NAME_LIST=$(sudo docker images | sed -n '1!p' | awk  '{print $1}' |  rev | cut -d '/' -f1 | rev)
-export IMAGES_LIST=$(sudo docker images | sed -n '1!p' | awk  '{print $1}' )
+export IMAGES_LIST=$(sudo docker images | sed -n '1!p' |  awk  '{print $1"_"$2}' )
 export DOCKER_IMAGE_DIR=/vagrant/temp_downloaded/docker-images
 
-echo ${DOCKER_IMAGE_DIR}
 
 mkdir -p ${DOCKER_IMAGE_DIR} || true
 
@@ -20,11 +19,12 @@ mkdir -p ${DOCKER_IMAGE_DIR} || true
 for image in ${IMAGES_LIST}
 do
 
-    IMAGE_NAME=$(echo ${image} |  rev | cut -d '/' -f1 | rev )
+    SAVED_IMAGE_NAME=$(echo ${image} |  rev | cut -d '/' -f1 | rev )
+    DOCKER_IMAGE_NAME=$(echo ${image} |  tr '_' ':' )
     if ! [ -f ${DOCKER_IMAGE_DIR}/${IMAGE_NAME}.tar ]
     then
         echo "Saving docker image ${IMAGE_NAME}"
-        sudo docker save -o ${DOCKER_IMAGE_DIR}/${IMAGE_NAME}.tar  ${image}  > /dev/null 2>&1
+        sudo docker save -o ${DOCKER_IMAGE_DIR}/${SAVED_IMAGE_NAME}.tar  ${DOCKER_IMAGE_NAME}  > /dev/null 2>&1
     fi
 done
 

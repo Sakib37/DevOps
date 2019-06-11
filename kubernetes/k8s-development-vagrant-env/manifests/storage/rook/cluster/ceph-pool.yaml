@@ -15,4 +15,4 @@ spec:
   # Make sure you have enough OSDs to support the replica size or sum of the erasure coding and data chunks.
   #erasureCoded:
   #  dataChunks: 2
-  #  codingChunks: 1
+#  codingChunks: 1

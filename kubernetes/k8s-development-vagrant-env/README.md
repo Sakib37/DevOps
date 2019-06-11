@@ -25,7 +25,7 @@ Components, Tools and Versions
 Required arguments
 ------------------------
 
-To run the CLI, k8s-dev, the following arguments are needed
+To run the CLI, ./k8s-dev.sh, the following arguments are needed
 
 ```bash
 	--help              Show this message
@@ -45,86 +45,86 @@ Usage
 -------------------
 
 ```bash
-	k8s-dev [--help] [--hosts] [--testplan] [ [--machine] [ --start | --restart | --shutdown | --terminate | --status | --sssh ] ]
+	./k8s-dev.sh [--help] [--hosts] [--testplan] [ [--machine] [ --start | --restart | --shutdown | --terminate | --status | --ssh ] ]
 ```
 
 
 ###### Print help
 
 ```bash
-	k8s-dev --help
+	./k8s-dev.sh --help
 ```
 
 ###### Print IP information for all vagrant instances in the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --hosts
+	./k8s-dev.sh --hosts
 ```
 
 ###### Start the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --start
+	./k8s-dev.sh --start
 ```
 
 ###### Start a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --machine=foo --start
+	./k8s-dev.sh --machine=foo --start
 ```
 
 ###### Restart the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --restart
+	./k8s-dev.sh --restart
 ```
 
 ###### Restart a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --machine=foo --restart
+	./k8s-dev.sh --machine=foo --restart
 ```
 
 ###### Shutdown the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --shutdown
+	./k8s-dev.sh --shutdown
 ```
 
 ###### Shutdown a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --machine=foo --shutdown
+	./k8s-dev.sh --machine=foo --shutdown
 ```
 
 ###### Terminate the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --terminate
+	./k8s-dev.sh --terminate
 ```
 
 ###### Terminate a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --machine=foo --terminate
+	./k8s-dev.sh --machine=foo --terminate
 ```
 
 ###### Display the status of all machines in the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --status
+	./k8s-dev.sh --status
 ```
 
 ###### Display the status of a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --machine=foo --status
+	./k8s-dev.sh --machine=foo --status
 ```
 
 ###### SSH into a machine (foo) in the Kubernetes Platform Environment
 
 ```bash
-	k8s-dev --machine=foo --ssh
+	./k8s-dev.sh --machine=foo --ssh
 ```
 
 ## Configure the Kubernetes CLI

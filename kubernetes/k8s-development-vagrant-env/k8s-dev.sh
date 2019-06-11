@@ -154,7 +154,7 @@ then
         bin/configure-networking.sh
 
         echo "deploying kubernetes operators"
-        bin/configure-operators.sh
+        #bin/configure-operators.sh
 
         echo "deploying monitoring infrastructure"
         #bin/configure-monitoring.sh
