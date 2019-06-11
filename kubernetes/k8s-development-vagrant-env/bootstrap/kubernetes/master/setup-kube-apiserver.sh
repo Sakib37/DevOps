@@ -116,7 +116,7 @@ EOL
 
 # Add the following flags if LDAP is used
 #    --oidc-issuer-url=https://k8s-auth-1:5554 \
-#    --oidc-client-id=pcit-k8s-vagrant \
+#    --oidc-client-id=k8s-vagrant \
 #    --oidc-ca-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
 #    --oidc-username-claim=email \
 #    --oidc-groups-claim=groups \
