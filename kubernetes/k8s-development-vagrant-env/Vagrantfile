@@ -357,7 +357,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # k8s_master_node.vm.network :forwarded_port, guest: 4040, host: 4040, auto_correct: true
 
       # configure the hostupdater alternative names
-      #k8s_master_node.hostmanager.aliases = %w(server.k8s.dev.dia.takeaway.com)
 
 
       k8s_master_node.vm.provider "virtualbox" do |node|
@@ -544,7 +543,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       #k8s_worker_node.vm.network :forwarded_port, guest: 10010, host: 10010, auto_correct: true
 
       # configure the hostupdater alternative names
-      #k8s_worker_node.hostmanager.aliases = %w("node.k8s.dev.dia.takeaway.com")
 
       k8s_worker_node.vm.provider "virtualbox" do |node|
         node.name = "k8s-node-" + num.to_s

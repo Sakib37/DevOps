@@ -44,7 +44,7 @@ spec:
   replicas: 3
   version: v0.14.0
   serviceAccountName: backend-apps-alert-manager
-  externalUrl: "http://alerts.core.monitoring.kubernetes.prod.compute.k8s.pcit.takeawaydata.io"
+  externalUrl: "https://alermanager.com"
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:

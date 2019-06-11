@@ -55,7 +55,7 @@ spec:
     - namespace: pcit-commons
       name: pcit-alert-manager
       port: http
-  externalUrl: "http://prometheus.pcit-commons.teams.kubernetes.prod.compute.k8s.pcit.takeawaydata.io"
+  externalUrl: "http://prometheus.commons.com"
   routePrefix: "/"
   affinity:
     podAntiAffinity:

@@ -55,7 +55,7 @@ spec:
     - namespace: product-intelligence-commons
       name: product-intelligence-alert-manager
       port: http
-  externalUrl: "http://prometheus.product-intelligence-commons.teams.kubernetes.prod.compute.k8s.pcit.takeawaydata.io"
+  externalUrl: "http://prometheus.com"
   routePrefix: "/"
   affinity:
     podAntiAffinity:

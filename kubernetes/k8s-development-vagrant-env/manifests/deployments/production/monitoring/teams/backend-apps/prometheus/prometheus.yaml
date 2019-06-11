@@ -55,7 +55,7 @@ spec:
     - namespace: backend-apps-commons
       name: backend-apps-alert-manager
       port: http
-  externalUrl: "http://prometheus.backend-apps-commons.teams.kubernetes.prod.compute.k8s.pcit.takeawaydata.io"
+  externalUrl: "url"
   routePrefix: "/"
   affinity:
     podAntiAffinity:
