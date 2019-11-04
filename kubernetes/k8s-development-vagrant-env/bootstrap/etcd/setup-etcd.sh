@@ -35,12 +35,16 @@ export ETCDCTL_API=3
 export ETCDCTL_CACERT=${ETCDCTL_CACERT}
 export ETCDCTL_CERT=${ETCDCTL_CERT}
 export ETCDCTL_KEY=${ETCDCTL_KEY}
-export ETCD_SERVERS=${ETCD_SERVERS_ENDPOINT}
-export ETCD_INITIAL_CLUSTER=${ETCD_INITIAL_CLUSTER}
 EOL
+
+#export ETCD_SERVERS=${ETCD_SERVERS_ENDPOINT}
 
 # source the ubuntu global env file to make etcd variables available to this session
 source /etc/environment
+
+# In etcd server IP is unknow use the discovery mechanism to form the clsuter
+# source: https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md#discovery
+# Here it is not required as the hostname and IP of the etcd nodes is known.
 
 sudo -E -s <<EOF
 
@@ -50,38 +54,35 @@ ETCD_INITIAL_ADVERTISE_PEER_URLS=https://$(hostname):2380
 ETCD_LISTEN_PEER_URLS=https://0.0.0.0:2380
 ETCD_LISTEN_CLIENT_URLS=https://0.0.0.0:2379
 ETCD_ADVERTISE_CLIENT_URLS=https://$(hostname):2379,https://127.0.0.1:2379
-ETCD_DISCOVERY=$(cat /vagrant/conf/etcd-discovery)
 ETCD_DISCOVERY_FALLBACK='exit'
 ETCD_DATA_DIR=${ETCD_DATA_DIR}
 ETCD_WAL_DIR=${ETCD_WAL_DIR}
 ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
-ETCD_PEER_CLIENT_CERT_AUTH=true
+ETCD_INITIAL_CLUSTER=${ETCD_INITIAL_CLUSTER}
 ETCD_CLIENT_CERT_AUTH=true
 ETCD_TRUSTED_CA_FILE=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem
 ETCD_CERT_FILE=${CFSSL_TLS_GUEST_FOLDER}/etcd/$(hostname)-client.pem
 ETCD_KEY_FILE=${CFSSL_TLS_GUEST_FOLDER}/etcd/$(hostname)-client-key.pem
+ETCD_PEER_CLIENT_CERT_AUTH=true
 ETCD_PEER_TRUSTED_CA_FILE=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem
 ETCD_PEER_CERT_FILE=${CFSSL_TLS_GUEST_FOLDER}/etcd/$(hostname)-peer.pem
 ETCD_PEER_KEY_FILE=${CFSSL_TLS_GUEST_FOLDER}/etcd/$(hostname)-peer-key.pem
 ETCD_HEARTBEAT_INTERVAL=6000
 ETCD_ELECTION_TIMEOUT=30000
 ETCD_ENABLE_V2=false
+ETCD_LOG_LEVEL=debug
 GOMAXPROCS=$(nproc)
 EOL
 
-
 chown ${ETCD_USER}:${ETCD_GROUP} /etc/default/etcd.conf
-
 
 cat > /etc/systemd/system/etcd.service << EOL
 [Unit]
-
 Description=Etcd Server
 Documentation=https://github.com/coreos/etcd
 After=network.target
 
 [Service]
-
 User=${ETCD_USER}
 Type=notify
 EnvironmentFile=/etc/default/etcd.conf

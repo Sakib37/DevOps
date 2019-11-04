@@ -31,7 +31,7 @@ function show_hosts(){
 
 # If the list of options (stored in the $@ variable) is empty then print the usage instructions
 
-if [[ -z $@ ]]
+if [[ -z $* ]]
 then
 	usage
 	exit 1
@@ -89,24 +89,11 @@ then
     echo "starting with the following config: "
     echo ""
     cat conf/config.json | jq .
-
-    # Check (and create if necessary) that the Etcd Cluster discovery url exists in the conf/discovery file
-    # use conf['masters']['count'] for the size as etcd should only run on the kubernetes servers (masters)
-    if [ ! -f conf/etcd-discovery ]
-    then
-        echo "etcd cluster autodiscovery url doesn't exist! creating one now"
-
-        ETCD_CLUSTER_SIZE=$(cat conf/config.json | jq .masters.count --raw-output)
-        ETCD_DISCOVERY_URL=$(cat conf/config.json | jq .etcd_discovery_service --raw-output)
-
-        curl -s ${ETCD_DISCOVERY_URL}${ETCD_CLUSTER_SIZE} > conf/etcd-discovery
-    fi
-    
     
     mkdir -p logs tls disks temp_downloaded conf/kubeconfig
 
     # start the vms in series
-	vagrant up --no-provision $MACHINE | tee logs/boot.log
+	  vagrant up --no-provision $MACHINE | tee logs/boot.log
 
     # provisioning the first vm alone so that next vms can use the already downloaded binaries
     FIRST_VM="k8s-server-1"
@@ -124,7 +111,6 @@ then
     
     echo "done provisioning all vms"
     
-    
     export K8S_ENABLE_POD_SECURITY_POLICIES=$(cat conf/config.json | jq .enable_pod_security_policies --raw-output)
     export K8S_ENABLE_NETWORK_POLICIES=$(cat conf/config.json | jq .enable_network_policies --raw-output)
     export K8S_ENABLE_SERVICE_MESH=$(cat conf/config.json | jq .enable_service_mesh --raw-output)
@@ -132,6 +118,20 @@ then
     export K8S_ENABLE_SAMPLE_APPS=$(cat conf/config.json | jq .enable_sample_apps --raw-output)
     export K8S_WORKER_COUNT=$(cat conf/config.json | jq .workers.count --raw-output)
 
+    # Uncomment following lines if ETCD discovery mechanism is being used
+    ## source: https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md#discovery
+    ## Check (and create if necessary) that the Etcd Cluster discovery url exists in the conf/discovery file
+    ## use conf['masters']['count'] for the size as etcd should only run on the kubernetes servers (masters)
+
+    #if [ ! -f conf/etcd-discovery ]
+    #then
+    #    echo "etcd cluster autodiscovery url doesn't exist! creating one now"
+
+    #    ETCD_CLUSTER_SIZE=$(cat conf/config.json | jq .masters.count --raw-output)
+    #    ETCD_DISCOVERY_URL=$(cat conf/config.json | jq .etcd_discovery_service --raw-output)
+
+    #    curl -s ${ETCD_DISCOVERY_URL}${ETCD_CLUSTER_SIZE} > conf/etcd-discovery
+    #fi
     
     echo "starting up kubernetes control plane"
     bin/startup-kubernetes-control-plane.sh

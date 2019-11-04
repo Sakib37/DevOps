@@ -10,15 +10,15 @@
     "ip_prefix": "10.0.1.10"
   },
   "masters": {
-    "count": 1,
+    "count": 3,
     "cpus": 2,
     "memory": 2048,
     "num_extra_disks": 0,
-    "gb_per_disk": 0,
+    "gb_per_disk": 5,
     "ip_prefix": "10.0.0.10"
   },
   "workers": {
-    "count": 2,
+    "count": 0,
     "cpus": 2,
     "memory": 3072,
     "num_extra_disks": 2,
@@ -30,7 +30,7 @@
   "kubernetes_services_ip_range": "10.77.0.0/16",
   "kubernetes_service_node_port_range": "30000-32767",
   "kubernetes_cluster_dns": "10.77.0.10",
-  "host_interface": "wlp4s0",
+  "host_interface": "wlo1",
   "tls_host_folder": "tls/",
   "tls_guest_folder": "/etc/tls/k8s",
   "kubeconfig_folder": "/vagrant/conf/kubeconfig",

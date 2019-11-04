@@ -13,7 +13,7 @@ conf = JSON.parse(file)
 
 
 # Install vagrant plugin dependencies for the Kubernetes Platform Cluster
-required_plugins = %w( vagrant-hosts vagrant-hostmanager )
+required_plugins = %w( vagrant-hosts vagrant-hostmanager vagrant-vbguest)
 required_plugins.each do |plugin|
   system "vagrant plugin Install #{plugin}" unless Vagrant.has_plugin? plugin
 end
@@ -60,7 +60,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Define the details of the base box to be used for all nodes in the landscape (CentOS 6.5 base box)
   #config.vm.box = "ubuntu/xenial64"
   config.vm.box = "ubuntu/bionic64"
-  config.vm.box_version = ">=20190101.0.0"
+  config.vm.box_version = ">=20191030.0.0"
 
   # Define network bridge for the network interfaces on all nodes
   #config.vm.network "public_network", bridge:'eth0'
@@ -550,6 +550,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         node.customize ["modifyvm", :id, "--cpus", conf['workers']['cpus']]
         node.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ] # disable guest os log files
         #node.linked_clone = true
+
+        # Prevent VirtualBox from interfering with host audio stack
+        # source: https://gist.github.com/mxey/ce6911724acee4517692bf683ee90624
+        node.customize ["modifyvm", :id, "--audio", "none"]
 
         disk_path_1 = "./disks/" + node.name + "/disk1.vdi"
         disk_path_2 = "./disks/" + node.name + "/disk2.vdi"

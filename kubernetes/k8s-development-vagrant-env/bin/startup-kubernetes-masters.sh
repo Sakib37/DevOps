@@ -7,6 +7,7 @@ source /etc/environment
 systemctl daemon-reload
 
 # start etcd
+
 echo "starting up etcd"
 systemctl enable etcd.service
 systemctl start etcd.service
