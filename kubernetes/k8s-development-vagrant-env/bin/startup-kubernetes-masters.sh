@@ -17,9 +17,11 @@ echo "Waiting for the ETCD service to be running ..."
 sleep 5
 
 echo "checking etcd status"
-# check etcd status
-ETCDCTL_API=3 etcdctl --cert=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client.pem --key=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client-key.pem member list
+#etcdctl --cert=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client.pem --key=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client-key.pem member list
+etcdctl member list
 echo "done"
+
+exit 0
 
 # start kubernetes apiserver
 echo "starting up kubernetes apiserver"

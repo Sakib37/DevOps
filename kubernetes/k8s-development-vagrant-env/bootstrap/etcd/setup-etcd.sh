@@ -31,13 +31,14 @@ done
 
 # Append the new Environment variables in /etc/default/etcd
 cat >> /etc/default/etcd <<EOL
-export ETCDCTL_API=3
 export ETCDCTL_CACERT=${ETCDCTL_CACERT}
 export ETCDCTL_CERT=${ETCDCTL_CERT}
 export ETCDCTL_KEY=${ETCDCTL_KEY}
+# The following flag is used by kube-apiserver to find ETCD endpoints
+export ETCD_SERVERS=${ETCD_SERVERS_ENDPOINT}
 EOL
 
-#export ETCD_SERVERS=${ETCD_SERVERS_ENDPOINT}
+
 
 # source the ubuntu global env file to make etcd variables available to this session
 source /etc/environment
@@ -96,20 +97,6 @@ TimeoutStartSec=0
 [Install]
 WantedBy=multi-user.target
 EOL
-
-
-#systemctl daemon-reload && systemctl enable etcd.service && systemctl start etcd.service
-# Check ETCD node status
-#ETCDCTL_API=3 etcdctl --cert=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client.pem \
-#                      --key=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client-key.pem \
-#                      --insecure-skip-tls-verify=true \
-#                      --endpoints=https://k8s-server-1:2379,https://k8s-server-2:2379,https://k8s-server-3:2379\
-#                       endpoint health
-# For etcdctl
-# export ETCDCTL_CA_FILE=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem
-# export ETCDCTL_CERT_FILE=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client.pem
-# export ETCDCTL_KEY_FILE=${CFSSL_TLS_GUEST_FOLDER}/etcd/k8s-server-1-client-key.pem
-# export ETCD_SERVERS_ENDPOINT=https://k8s-server-1:2379,https://k8s-server-2:2379,https://k8s-server-3:2379
 
 EOF
 

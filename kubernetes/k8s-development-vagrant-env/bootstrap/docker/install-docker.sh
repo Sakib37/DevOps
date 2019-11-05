@@ -3,13 +3,13 @@
 set -xe
 
 
-DOCKER_ENGINE_VERSION=17.03.2-ce
+DOCKER_ENGINE_VERSION=18.06.0-ce
 DOCKER_BINARY_VM_LOCATION=/vagrant/temp_downloaded/docker-${DOCKER_ENGINE_VERSION}.tgz
 DOCKER_BINARY_DOWNLOAD_URL=https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_ENGINE_VERSION}.tgz
 DOCKER_USER=vagrant
 
 cat > /etc/default/docker-engine.conf <<"EOL"
-DOCKER_ENGINE_VERSION=17.03.2-ce
+DOCKER_ENGINE_VERSION=18.06.0-ce
 DOCKER_OPTS=
 EOL
 

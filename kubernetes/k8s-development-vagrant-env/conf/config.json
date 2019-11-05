@@ -10,9 +10,9 @@
     "ip_prefix": "10.0.1.10"
   },
   "masters": {
-    "count": 3,
+    "count": 1,
     "cpus": 2,
-    "memory": 2048,
+    "memory": 3072,
     "num_extra_disks": 0,
     "gb_per_disk": 5,
     "ip_prefix": "10.0.0.10"

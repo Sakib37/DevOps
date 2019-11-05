@@ -9,17 +9,17 @@ Components, Tools and Versions
 |component  | version|
 | --------- |  -------- |
 |ubuntu | 18.04 |
-|kubernetes | 1.12.2 |
-|docker | 1.17.03 |
-|etcd | 3.3.10 |
+|kubernetes | 1.16.2 |
+|docker | 18.06.0-ce |
+|etcd | 3.4.3 |
 |rook (ceph storage) | 0.7.0 |
 |cni | 0.6.0 |
 |cri-containerd | 1.0.0-alpha.0 |
 |runc | 1.0.0-rc4 |
 |weave net | 2.4.1 |
 |istio | 0.7.0|
-|cfssl | 1.3.2 |
-|go    | 1.11.2 |
+|cfssl | 1.3.4 |
+|go    | 1.13.4 |
 
 
 Required arguments

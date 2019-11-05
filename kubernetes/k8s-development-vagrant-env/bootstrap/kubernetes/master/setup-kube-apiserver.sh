@@ -79,14 +79,14 @@ ExecStart=/usr/local/bin/kube-apiserver \
     --cloud-provider=${KUBERNETES_SERVICE_CLOUD_PROVIDER} \
     --client-ca-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     --enable-admission-plugins=${KUBERNETES_SERVICE_ADMISSION_PLUGINS} \
-    --feature-gates=ExpandPersistentVolumes=true,TaintBasedEvictions=true,ExperimentalCriticalPodAnnotation=true \
+    --feature-gates=ExpandPersistentVolumes=true,TaintBasedEvictions=true \
     --enable-swagger-ui=true \
     --etcd-cafile=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     --etcd-certfile=${CFSSL_TLS_GUEST_FOLDER}/etcd/${KUBERNETES_SERVER_NAME}-client.pem \
     --etcd-keyfile=${CFSSL_TLS_GUEST_FOLDER}/etcd/${KUBERNETES_SERVER_NAME}-client-key.pem \
     --etcd-servers=${ETCD_SERVERS} \
     --event-ttl=15m \
-    --experimental-encryption-provider-config=/vagrant/conf/data-encryption-config.yaml \
+    --encryption-provider-config=/vagrant/conf/data-encryption-config.yaml \
     --kubelet-certificate-authority=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     --kubelet-client-certificate=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver.pem \
     --kubelet-client-key=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver-key.pem \
@@ -113,15 +113,6 @@ TimeoutStartSec=0
 WantedBy=multi-user.target
 EOL
 
-
-# Add the following flags if LDAP is used
-#    --oidc-issuer-url=https://k8s-auth-1:5554 \
-#    --oidc-client-id=k8s-vagrant \
-#    --oidc-ca-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
-#    --oidc-username-claim=email \
-#    --oidc-groups-claim=groups \
-
-#systemctl daemon-reload && systemctl enable kube-apiserver.service && systemctl start kube-apiserver.service
 
 EOF
 
