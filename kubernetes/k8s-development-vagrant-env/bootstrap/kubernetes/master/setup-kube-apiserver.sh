@@ -10,7 +10,7 @@ export KUBERNETES_SERVICE_CLUSTER_IP_RANGE=${3}
 export KUBERNETES_SERVICE_NODE_PORT_RANGE=${4}
 export KUBERNETES_SERVICE_CLOUD_PROVIDER=${5}
 export KUBERNETES_SERVICE_ENABLE_POD_SECURITY_POLICY=${6}
-export KUBERNETES_SERVICE_ADMISSION_PLUGINS=Initializers,NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,PersistentVolumeClaimResize,AlwaysPullImages,PodPreset
+export KUBERNETES_SERVICE_ADMISSION_PLUGINS=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,PersistentVolumeClaimResize,AlwaysPullImages
 #
 # if pod security policy is set as enabled through the config file then add PodSecurityPolicy to list of admission plugins
 if [ "${KUBERNETES_SERVICE_ENABLE_POD_SECURITY_POLICY}" = true ]
@@ -80,7 +80,6 @@ ExecStart=/usr/local/bin/kube-apiserver \
     --client-ca-file=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     --enable-admission-plugins=${KUBERNETES_SERVICE_ADMISSION_PLUGINS} \
     --feature-gates=ExpandPersistentVolumes=true,TaintBasedEvictions=true \
-    --enable-swagger-ui=true \
     --etcd-cafile=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     --etcd-certfile=${CFSSL_TLS_GUEST_FOLDER}/etcd/${KUBERNETES_SERVER_NAME}-client.pem \
     --etcd-keyfile=${CFSSL_TLS_GUEST_FOLDER}/etcd/${KUBERNETES_SERVER_NAME}-client-key.pem \
@@ -91,7 +90,7 @@ ExecStart=/usr/local/bin/kube-apiserver \
     --kubelet-client-certificate=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver.pem \
     --kubelet-client-key=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver-key.pem \
     --kubelet-https=true \
-    --runtime-config=api/all,admissionregistration.k8s.io/v1beta1,admissionregistration.k8s.io/v1alpha1,settings.k8s.io/v1alpha1=true \
+    --runtime-config=api/all \
     --service-account-key-file=${CFSSL_TLS_GUEST_FOLDER}/service-accounts/service-accounts.pem \
     --service-cluster-ip-range=${KUBERNETES_SERVICE_CLUSTER_IP_RANGE} \
     --service-node-port-range=${KUBERNETES_SERVICE_NODE_PORT_RANGE} \

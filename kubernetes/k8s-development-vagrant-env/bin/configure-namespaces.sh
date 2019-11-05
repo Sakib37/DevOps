@@ -3,45 +3,45 @@
 export KUBECONFIG=conf/kubeconfig/admin.kubeconfig
 
 # configure core/system namespaces
-kubectl apply -f manifests/namespaces/global/default/namespace.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/default/limits.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/default/resourcequotas.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/default/tiller.yaml | tee -a logs/manifests.log
-
-kubectl apply -f manifests/namespaces/global/kube-system/namespace.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/kube-system/limits.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/kube-system/resourcequotas.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/kube-system/tiller.yaml | tee -a logs/manifests.log
-
-kubectl apply -f manifests/namespaces/global/istio-system/namespace.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/istio-system/limits.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/istio-system/resourcequotas.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/istio-system/tiller.yaml | tee -a logs/manifests.log
-
-kubectl apply -f manifests/namespaces/global/rook-system/namespace.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/rook-system/limits.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/rook-system/resourcequotas.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/rook-system/tiller.yaml | tee -a logs/manifests.log
-
-kubectl apply -f manifests/namespaces/global/rook/namespace.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/rook/limits.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/rook/resourcequotas.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/rook/tiller.yaml | tee -a logs/manifests.log
-
-kubectl apply -f manifests/namespaces/global/production/namespace.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/production/limits.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/production/resourcequotas.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/production/tiller.yaml | tee -a logs/manifests.log
-
-kubectl apply -f manifests/namespaces/global/staging/namespace.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/staging/limits.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/staging/resourcequotas.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/staging/tiller.yaml | tee -a logs/manifests.log
-
-kubectl apply -f manifests/namespaces/global/security-system/namespace.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/security-system/limits.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/security-system/resourcequotas.yaml | tee -a logs/manifests.log
-kubectl apply -f manifests/namespaces/global/security-system/tiller.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/default/namespace.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/default/limits.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/default/resourcequotas.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/default/tiller.yaml | tee -a logs/manifests.log
+#
+#kubectl apply -f manifests/namespaces/global/kube-system/namespace.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/kube-system/limits.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/kube-system/resourcequotas.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/kube-system/tiller.yaml | tee -a logs/manifests.log
+#
+#kubectl apply -f manifests/namespaces/global/istio-system/namespace.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/istio-system/limits.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/istio-system/resourcequotas.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/istio-system/tiller.yaml | tee -a logs/manifests.log
+#
+#kubectl apply -f manifests/namespaces/global/rook-system/namespace.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/rook-system/limits.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/rook-system/resourcequotas.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/rook-system/tiller.yaml | tee -a logs/manifests.log
+#
+#kubectl apply -f manifests/namespaces/global/rook/namespace.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/rook/limits.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/rook/resourcequotas.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/rook/tiller.yaml | tee -a logs/manifests.log
+#
+#kubectl apply -f manifests/namespaces/global/production/namespace.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/production/limits.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/production/resourcequotas.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/production/tiller.yaml | tee -a logs/manifests.log
+#
+#kubectl apply -f manifests/namespaces/global/staging/namespace.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/staging/limits.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/staging/resourcequotas.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/staging/tiller.yaml | tee -a logs/manifests.log
+#
+#kubectl apply -f manifests/namespaces/global/security-system/namespace.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/security-system/limits.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/security-system/resourcequotas.yaml | tee -a logs/manifests.log
+#kubectl apply -f manifests/namespaces/global/security-system/tiller.yaml | tee -a logs/manifests.log
 
 # configure team namespaces
 

@@ -76,19 +76,18 @@ Requires=docker.service
 EnvironmentFile=/etc/default/kubelet.conf
 ExecStart=/usr/local/bin/kubelet \
   --config=${KUBELET_CONFIGURATION_FILE} \
-  --allow-privileged=true \
   --cloud-provider=${KUBERNETES_SERVICE_CLOUD_PROVIDER} \
   --container-runtime=docker \
   --docker-endpoint=unix:///var/run/docker.sock \
   --container-runtime-endpoint=unix:///var/run/dockershim.sock \
-  --image-pull-progress-deadline=2m \
+  --image-pull-progress-deadline=4m \
   --image-service-endpoint=unix:///var/run/dockershim.sock \
   --kubeconfig=/vagrant/conf/kubeconfig/${KUBELET_NODE_NAME}/${KUBELET_NODE_NAME}-kubelet.kubeconfig \
   --network-plugin=cni \
   --cni-bin-dir=/opt/cni/bin \
   --register-node=true \
   --register-with-taints=node-role.kubernetes.io/master=true:NoSchedule \
-  --node-labels=kubernetes.io/role=master,node-role.kubernetes.io/master=true \
+  --node-labels=kubelet.kubernetes.io/role=master,node.kubernetes.io/master=true \
   --volume-plugin-dir=/var/lib/kubelet/volumeplugins \
   --v=2
 

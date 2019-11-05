@@ -21,7 +21,6 @@ echo "checking etcd status"
 etcdctl member list
 echo "done"
 
-exit 0
 
 # start kubernetes apiserver
 echo "starting up kubernetes apiserver"

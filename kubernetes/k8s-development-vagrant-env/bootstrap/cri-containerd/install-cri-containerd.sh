@@ -30,3 +30,5 @@ rm -rf crio-amd64-v${CRIO_VERSION}.tar.gz
 echo "Cri-Containerd runtime v${CRI_CONTAINERD_VERSION} downloaded successfully"
 
 exit 0
+
+EOF

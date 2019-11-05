@@ -91,7 +91,7 @@ ExecStart=/usr/local/bin/kubelet \
   --network-plugin=cni \
   --cni-bin-dir=/opt/cni/bin \
   --register-node=true \
-  --node-labels=kubernetes.io/role=worker,node-role.kubernetes.io/worker=true \
+  --node-labels=kubelet.kubernetes.io/role=worker,node.kubernetes.io/worker=true \
   --volume-plugin-dir=/var/lib/kubelet/volumeplugins \
   --v=2
 
