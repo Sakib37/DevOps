@@ -66,7 +66,6 @@ tlsPrivateKeyFile: "${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBELET_NODE_NAME}-kubel
 featureGates:
     ExpandPersistentVolumes: true
     TaintBasedEvictions: true
-    ExperimentalCriticalPodAnnotation: true
 EOL
 
 sudo tee /etc/systemd/system/kubelet.service  > /dev/null <<"EOL"
@@ -80,7 +79,6 @@ Requires=docker.service
 EnvironmentFile=/etc/default/kubelet.conf
 ExecStart=/usr/local/bin/kubelet \
   --config=${KUBELET_CONFIGURATION_FILE} \
-  --allow-privileged=true \
   --cloud-provider=${KUBERNETES_SERVICE_CLOUD_PROVIDER} \
   --container-runtime=docker \
   --docker-endpoint=unix:///var/run/docker.sock \

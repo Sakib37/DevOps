@@ -86,7 +86,7 @@ ExecStart=/usr/local/bin/kubelet \
   --network-plugin=cni \
   --cni-bin-dir=/opt/cni/bin \
   --register-node=true \
-  --register-with-taints=node-role.kubernetes.io/master=true:NoSchedule \
+  --register-with-taints=node.kubernetes.io/master=true:NoSchedule \
   --node-labels=kubelet.kubernetes.io/role=master,node.kubernetes.io/master=true \
   --volume-plugin-dir=/var/lib/kubelet/volumeplugins \
   --v=2

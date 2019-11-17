@@ -3,42 +3,52 @@ kind: ServiceAccount
 metadata:
   name: coredns
   namespace: kube-system
+  labels:
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  name: system:coredns
   labels:
     kubernetes.io/bootstrapping: rbac-defaults
-  name: system:coredns
+    addonmanager.kubernetes.io/mode: Reconcile
 rules:
 - apiGroups:
-  - ""
+    - ""
   resources:
-  - endpoints
-  - services
-  - pods
-  - namespaces
-  - secrets
+    - endpoints
+    - services
+    - pods
+    - namespaces
   verbs:
-  - list
-  - watch
+    - list
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - nodes
+  verbs:
+    - get
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   annotations:
     rbac.authorization.kubernetes.io/autoupdate: "true"
   labels:
     kubernetes.io/bootstrapping: rbac-defaults
+    addonmanager.kubernetes.io/mode: EnsureExists
   name: system:coredns
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: system:coredns
 subjects:
-- kind: ServiceAccount
-  name: coredns
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: coredns
+    namespace: kube-system
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -50,10 +60,12 @@ data:
     .:53 {
         errors
         health
+        ready
         kubernetes cluster.local in-addr.arpa ip6.arpa {
           pods insecure
           upstream
           fallthrough in-addr.arpa ip6.arpa
+          ttl 30
         }
         prometheus :9153
         proxy . /etc/resolv.conf
@@ -63,13 +75,15 @@ data:
         loadbalance
     }
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: coredns
   namespace: kube-system
   labels:
     k8s-app: kube-dns
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
     kubernetes.io/name: "CoreDNS"
 spec:
   replicas: 2
@@ -84,16 +98,19 @@ spec:
     metadata:
       labels:
         k8s-app: kube-dns
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: 'runtime/default'
     spec:
+      priorityClassName: system-cluster-critical
       serviceAccountName: coredns
       tolerations:
-        - key: node-role.kubernetes.io/master
+        - key: node.kubernetes.io/master
           effect: NoSchedule
         - key: "CriticalAddonsOnly"
           operator: "Exists"
       containers:
       - name: coredns
-        image: coredns/coredns:1.3.0
+        image: k8s.gcr.io/coredns:1.6.2
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -116,14 +133,6 @@ spec:
         - containerPort: 9153
           name: metrics
           protocol: TCP
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            add:
-            - NET_BIND_SERVICE
-            drop:
-            - all
-          readOnlyRootFilesystem: true
         livenessProbe:
           httpGet:
             path: /health
@@ -133,6 +142,19 @@ spec:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8181
+            scheme: HTTP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add:
+            - NET_BIND_SERVICE
+            drop:
+            - all
+          readOnlyRootFilesystem: true
       dnsPolicy: Default
       volumes:
         - name: config-volume
@@ -153,15 +175,19 @@ metadata:
   labels:
     k8s-app: kube-dns
     kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
     kubernetes.io/name: "CoreDNS"
 spec:
   selector:
     k8s-app: kube-dns
   clusterIP: 10.77.0.10
   ports:
-  - name: dns
-    port: 53
-    protocol: UDP
-  - name: dns-tcp
-    port: 53
-    protocol: TCP
+    - name: dns
+      port: 53
+      protocol: UDP
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+    - name: metrics
+      port: 9153
+      protocol: TCP
