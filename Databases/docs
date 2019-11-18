@@ -1,0 +1,55 @@
+commands:
+=========
+
+dbname=> \q   --to quit
+
+dbname=> \c database        --to connect to a different database
+
+dbname=> \pset pager        --to toggle  on/off whether a screen pager is used for long output
+
+dbname=> \l                 --to list all databases in the current PostgreSQL database server
+
+dbname=> \dl                --to list all tables in the current database
+
+dbname=> \d                 --to describe (list) what tables are in the database
+
+dbname=> \d table_name      --to describe attributes of a table
+
+dbname=> \dn                --to list all schemas of the currently connected database
+
+dbname=> \dv                --to list all view of the currently connected database
+
+dbname=> \du                --to list all users and their assign roles
+
+dbname=> SELECT version();  --to check the version of the database
+
+dbname=> \g                 --to run the immediate previous command
+
+dbname=> \s                 --to display command history
+
+dbname=> \i filename        --to run (include) a script file of SQL commands
+
+dbname=> \e filename        --to edit an existing script and execute the commands
+
+dbname=> \e                 --to edit the last SQL command and execute upon exit
+
+dbname=> \w filename        --to write the last SQL command to a file
+
+dbname=> \?                 --show the list of \postgres commands
+
+dbname=> \h                 --show the list of SQL commands
+
+dbname=> \h command         --show syntax on this SQL command
+dbname=> \password USERNAME --change password for USER
+
+
+
+dbname=> \q                 --quit psql
+
+
+
+
+
+dbname=>CREATE DATABASE databasename
+--Then you can connect to this database
+dbname=> \c databasename

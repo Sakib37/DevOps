@@ -1,0 +1,2 @@
+docker run -idt  --name pg-docker-1 -e POSTGRES_PASSWORD=docker  -p 5432:5432   \
+        -v /home/sakib/DevOps_git/DevOps/Databases/Postgres/pg-docker-1:/var/lib/postgresql/data  postgres:12.0

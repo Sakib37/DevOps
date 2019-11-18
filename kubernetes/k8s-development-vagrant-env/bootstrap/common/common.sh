@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KUPA_FILE_CACHE=/vagrant/packages
+VAGRANT_K8S_FILE_CACHE=/vagrant/packages
 
 # The fetch_from_cache function is used to fetch files from the cache.
 # If the file does not already exist in the cache it is downloaded to the cache
@@ -28,7 +28,7 @@ function fetch_file {
     fi
 
 
-    CACHE_FILE_LOCATION=${KUPA_FILE_CACHE}/${FILE_NAME}
+    CACHE_FILE_LOCATION=${VAGRANT_K8S_FILE_CACHE}/${FILE_NAME}
 
     if [ ! -f ${CACHE_FILE_LOCATION} ]
     then
