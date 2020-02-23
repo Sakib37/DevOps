@@ -90,7 +90,7 @@ ExecStart=/usr/local/bin/kube-apiserver \
     --kubelet-client-certificate=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver.pem \
     --kubelet-client-key=${CFSSL_TLS_GUEST_FOLDER}/kube-api/${KUBERNETES_SERVER_NAME}-apiserver-key.pem \
     --kubelet-https=true \
-    --runtime-config=api/all \
+    --runtime-config=api/all=true \
     --service-account-key-file=${CFSSL_TLS_GUEST_FOLDER}/service-accounts/service-accounts.pem \
     --service-cluster-ip-range=${KUBERNETES_SERVICE_CLUSTER_IP_RANGE} \
     --service-node-port-range=${KUBERNETES_SERVICE_NODE_PORT_RANGE} \

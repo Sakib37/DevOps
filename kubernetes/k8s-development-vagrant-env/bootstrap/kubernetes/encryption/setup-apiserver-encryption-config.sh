@@ -14,8 +14,8 @@ else
     ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 
     cat > /vagrant/conf/data-encryption-config.yaml <<EOF
-kind: EncryptionConfig
-apiVersion: v1
+apiVersion: apiserver.config.k8s.io/v1
+kind: EncryptionConfiguration
 resources:
   - resources:
       - secrets

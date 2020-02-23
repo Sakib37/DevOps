@@ -3,7 +3,7 @@
 set -xe
 
 cat > /etc/default/kubernetes-platform <<"EOL"
-export KUBERNETES_PLATFORM_VERSION=1.16.2
+export KUBERNETES_PLATFORM_VERSION=1.17.3
 export KUBERNETES_PLATFORM_HOME=/var/lib/kubernetes
 export KUBERNETES_PLATFORM_USER=kubernetes
 export KUBERNETES_PLATFORM_USER_ID=1400

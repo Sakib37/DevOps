@@ -1,0 +1,14 @@
+source: https://wiki.jenkins.io/display/JENKINS/Remote+access+API
+
+- Trigger Jobs without parameters
+    curl  JENKINS_URL/job/JOBNAME/build
+
+- Trigger Jobs with parameters
+    curl -X POST JENKINS_URL/job/JOB_NAME/buildWithParameters \
+      --user USER:TOKEN \
+      --data-urlencode json='{"parameter": [{"name":"id", "value":"123"}, {"name":"verbosity", "value":"high"}]}'
+
+
+- Two python API wrappers are available for Jenkins-
+        JenkinsAPI      - https://pypi.org/project/jenkinsapi/
+        Python-Jenkins  - https://pypi.org/project/python-jenkins/
