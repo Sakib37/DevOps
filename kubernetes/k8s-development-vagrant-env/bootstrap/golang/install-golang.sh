@@ -13,7 +13,7 @@ source /etc/environment
 mkdir -p /home/vagrant/go/{bin,src,pkg}
 
 # Change the version number according to your requirement
-GOLANG_VERSION=1.13.8
+GOLANG_VERSION=1.14.1
 GOROOT=/usr/local/go
 GOPATH=/home/vagrant/go
 GOBIN=${GOPATH}/bin
@@ -36,9 +36,11 @@ if grep -Fxq "# Env for golang" /etc/environment
 then
     echo "Golang environment is already set"
 else
+    # shellcheck disable=SC2129
     echo -e "\n# Env for golang"  >> /etc/environment
     echo "export GOROOT=${GOROOT}" >> /etc/environment
     echo "export GOPATH=${GOPATH}" >> /etc/environment
+    echo "export GOBIN=${GOBIN}"  >> /etc/environment
     echo "export PATH=${PATH}:${GOROOT}/bin:${GOPATH}/bin" >>  /etc/environment
     echo "" >>  /etc/environment
 fi

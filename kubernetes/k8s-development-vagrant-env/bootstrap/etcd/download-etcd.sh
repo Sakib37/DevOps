@@ -2,7 +2,7 @@
 
 set -xe
 
-export ETCD_VERSION=3.4.3
+export ETCD_VERSION=3.4.7
 export ETCD_DOWNLOAD_URL=https://github.com/coreos/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz
 export ETCD_BINARY_VM_LOCATION=/vagrant/temp_downloaded/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz
 

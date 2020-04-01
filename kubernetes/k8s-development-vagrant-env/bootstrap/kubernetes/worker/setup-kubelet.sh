@@ -31,6 +31,11 @@ EOL
 sudo chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kubelet.conf
 
 
+# Create and set owner for volume plugin dir
+mkdir /var/lib/kubelet
+chown -R ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_USER} /var/lib/kubelet
+
+
 # add a line which sources /etc/default/kubelet.conf in the ubuntu global env /etc/environment file
 grep -q -F '. /etc/default/kubelet.conf' /etc/environment || echo '. /etc/default/kubelet.conf' >> /etc/environment
 

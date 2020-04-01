@@ -35,6 +35,11 @@ source /etc/environment
 
 sudo chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kubelet.conf
 
+# Create and set owner for volume plugin dir
+mkdir /var/lib/kubelet
+chown -R ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_USER} /var/lib/kubelet
+
+
 
 # Check "https://github.com/kubernetes/kubernetes/issues/69665" for kubelet config file example
 

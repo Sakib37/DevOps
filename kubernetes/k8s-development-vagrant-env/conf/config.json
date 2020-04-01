@@ -38,6 +38,6 @@
   "enable_pod_security_policies": "false",
   "enable_network_policies": "false",
   "enable_service_mesh": "false",
-  "enable_rook_storage": "true",
+  "enable_rook_storage": "false",
   "enable_sample_apps": "false"
 }

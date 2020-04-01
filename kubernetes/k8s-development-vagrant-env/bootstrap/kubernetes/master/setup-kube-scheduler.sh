@@ -20,36 +20,40 @@ source /etc/environment
 
 sudo chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kube-scheduler.conf
 
-sudo tee ${KUBE_SCHEDULER_CONFIGURATION} > /dev/null <<EOL
-kind: KubeSchedulerConfiguration
-apiVersion: kubescheduler.config.k8s.io/v1alpha1
-algorithmSource:
-  provider: DefaultProvider
-clientConnection:
-  acceptContentTypes: ""
-  burst: 100
-  contentType: application/vnd.kubernetes.protobuf
-  kubeconfig: "/vagrant/conf/kubeconfig/${KUBERNETES_NODE_NAME}/${KUBERNETES_NODE_NAME}-kube-scheduler.kubeconfig"
-  qps: 50
-disablePreemption: false
-enableContentionProfiling: false
-enableProfiling: false
-failureDomains: kubernetes.io/hostname,failure-domain.beta.kubernetes.io/zone,failure-domain.beta.kubernetes.io/region
-hardPodAffinitySymmetricWeight: 1
-healthzBindAddress: 0.0.0.0:10251
-leaderElection:
-  leaderElect: true
-  leaseDuration: 15s
-  lockObjectName: kube-scheduler
-  lockObjectNamespace: kube-system
-  renewDeadline: 10s
-  resourceLock: endpoints
-  retryPeriod: 2s
-metricsBindAddress: 0.0.0.0:10251
-schedulerName: default-scheduler
-EOL
+#
+# kubescheduler config file is an alpha feature. So commenting it for now
+#
 
-sudo tee /etc/systemd/system/kube-scheduler.service > /dev/null <<"EOL"
+#sudo tee ${KUBE_SCHEDULER_CONFIGURATION} > /dev/null <<EOL
+#kind: KubeSchedulerConfiguration
+#apiVersion: kubescheduler.config.k8s.io/v1alpha1
+#algorithmSource:
+#  provider: DefaultProvider
+#clientConnection:
+#  acceptContentTypes: ""
+#  burst: 100
+#  contentType: application/vnd.kubernetes.protobuf
+#  kubeconfig: "/vagrant/conf/kubeconfig/${KUBERNETES_NODE_NAME}/${KUBERNETES_NODE_NAME}-kube-scheduler.kubeconfig"
+#  qps: 50
+#disablePreemption: false
+#enableContentionProfiling: false
+#enableProfiling: false
+#failureDomains: kubernetes.io/hostname,failure-domain.beta.kubernetes.io/zone,failure-domain.beta.kubernetes.io/region
+#hardPodAffinitySymmetricWeight: 1
+#healthzBindAddress: 0.0.0.0:10251
+#leaderElection:
+#  leaderElect: true
+#  leaseDuration: 15s
+#  lockObjectName: kube-scheduler
+#  lockObjectNamespace: kube-system
+#  renewDeadline: 10s
+#  resourceLock: endpoints
+#  retryPeriod: 2s
+#metricsBindAddress: 0.0.0.0:10251
+#schedulerName: default-scheduler
+#EOL
+
+sudo tee /etc/systemd/system/kube-scheduler.service > /dev/null <<EOL
 [Unit]
 Description=Kubernetes Scheduler
 Documentation=https://github.com/kubernetes/kubernetes
@@ -58,7 +62,10 @@ Documentation=https://github.com/kubernetes/kubernetes
 User=kubernetes
 EnvironmentFile=/etc/default/kube-scheduler.conf
 ExecStart=/usr/local/bin/kube-scheduler \
-    --config=${KUBE_SCHEDULER_CONFIGURATION} \
+    --leader-elect=true \
+    --kubeconfig=/vagrant/conf/kubeconfig/${KUBERNETES_NODE_NAME}/${KUBERNETES_NODE_NAME}-kube-scheduler.kubeconfig \
+    --feature-gates=NonPreemptingPriority=false \
+    --algorithm-provider=DefaultProvider \
     --v=2
 Restart=on-failure
 RestartSec=5
