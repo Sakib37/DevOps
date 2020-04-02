@@ -11,14 +11,14 @@ export CERT_NAME=aggregator
 # source the ubuntu global env file to make cfssl variables available to this session
 source /etc/environment
 
-if [ -f ${CFSSL_TLS_GUEST_FOLDER}/aggregator/${CERT_NAME}-csr.json ] && [ -f ${CFSSL_TLS_GUEST_FOLDER}/aggregator/${CERT_NAME}-key.pem ]
+if [ -f "${CFSSL_TLS_GUEST_FOLDER}"/aggregator/${CERT_NAME}-csr.json ] && [ -f "${CFSSL_TLS_GUEST_FOLDER}"/aggregator/${CERT_NAME}-key.pem ]
 then
 
     echo "Skipping Kubernetes Aggregation proxy client certificate generation - it already exists"
 
 else
 
-mkdir -p ${CFSSL_TLS_GUEST_FOLDER}/aggregator
+mkdir -p "${CFSSL_TLS_GUEST_FOLDER}"/aggregator
 
 
 separator=
@@ -34,7 +34,7 @@ done
 
 # generate aggregator proxy client certificate signing request
 
-cat - > ${CFSSL_TLS_GUEST_FOLDER}/aggregator/${CERT_NAME}-csr.json <<EOF
+cat - > "${CFSSL_TLS_GUEST_FOLDER}"/aggregator/${CERT_NAME}-csr.json <<EOF
 {
   "CN": "aggregator",
   "hosts": [
