@@ -20,12 +20,29 @@ else
 
 mkdir -p ${CFSSL_TLS_GUEST_FOLDER}/kubernetes
 
+HOSTNAME=$(hostname)
+
+separator=
+formatted_ip_addresses=
+
+for one in $IP_ADDRESSES
+do
+    formatted_ip_addresses=$formatted_ip_addresses$separator\"$one\"
+    separator=", "
+done
 
 # generate admin operator certificate signing request
 
 cat - > ${CFSSL_TLS_GUEST_FOLDER}/kubernetes/${CERT_NAME}-csr.json <<EOF
 {
   "CN": "${CERT_NAME}",
+  "hosts": [
+    ${formatted_ip_addresses},
+    "127.0.0.1",
+    "10.0.2.15",
+    "localhost",
+    "${HOSTNAME}"
+  ],
   "key": {
     "algo": "rsa",
     "size": 2048

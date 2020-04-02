@@ -9,18 +9,19 @@ export CFSSL_TLS_GUEST_FOLDER=${1}
 source /etc/environment
 
 
-if [ -f ${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json ] && [ -f ${CFSSL_TLS_GUEST_FOLDER}/ca/ca-csr.json ]
+# shellcheck disable=SC2086
+if [ -f "${CFSSL_TLS_GUEST_FOLDER}"/ca/ca-config.json ] && [ -f ${CFSSL_TLS_GUEST_FOLDER}/ca/ca-csr.json ]
 then
 
     echo "Skipping CA certificate generation - it already exists"
 
 else
 
-mkdir -p ${CFSSL_TLS_GUEST_FOLDER}/ca
+mkdir -p "${CFSSL_TLS_GUEST_FOLDER}"/ca
 
 # generate certificate signing request ca-csr.json
 
-cat - > ${CFSSL_TLS_GUEST_FOLDER}/ca/ca-csr.json <<'EOF'
+cat - > "${CFSSL_TLS_GUEST_FOLDER}"/ca/ca-csr.json <<'EOF'
 {
   "CN": "Kubernetes",
   "key": {
@@ -95,7 +96,7 @@ then
 fi
 EOL
 
-chmod 400 ${CFSSL_TLS_GUEST_FOLDER}/ca/*-key.pem
+chmod 400 "${CFSSL_TLS_GUEST_FOLDER}"/ca/*-key.pem
 
 
 echo "CA Certificates successfully generated and installed on VM"

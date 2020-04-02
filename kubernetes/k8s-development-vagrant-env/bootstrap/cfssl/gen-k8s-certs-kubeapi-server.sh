@@ -43,7 +43,6 @@ cat - > ${CFSSL_TLS_GUEST_FOLDER}/kube-api/${CERT_NAME}-csr.json <<EOF
     "${GATEWAY_IP}",
     "${GATEWAY_HOSTNAME}",
     "10.77.0.1",
-    "10.0.2.2",
     "10.0.2.15"
   ],
   "key": {

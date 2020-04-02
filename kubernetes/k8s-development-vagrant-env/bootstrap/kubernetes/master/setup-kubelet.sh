@@ -26,13 +26,6 @@ KUBELET_CONFIGURATION_FILE=${KUBERNETES_PLATFORM_HOME}/kubelet-configuration.yam
 GOMAXPROCS=$(nproc)
 EOL
 
-
-# add a line which sources /etc/default/kubelet.conf in the ubuntu global env /etc/environment file
-grep -q -F '. /etc/default/kubelet.conf' /etc/environment || echo '. /etc/default/kubelet.conf' >> /etc/environment
-
-# source the ubuntu global env file to make kubelet variables available to this session
-source /etc/environment
-
 sudo chown ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_GROUP} /etc/default/kubelet.conf
 
 # Create and set owner for volume plugin dir
@@ -40,14 +33,18 @@ mkdir /var/lib/kubelet
 chown -R ${KUBERNETES_PLATFORM_USER}:${KUBERNETES_PLATFORM_USER} /var/lib/kubelet
 
 
+# add a line which sources /etc/default/kubelet.conf in the ubuntu global env /etc/environment file
+grep -q -F '. /etc/default/kubelet.conf' /etc/environment || echo '. /etc/default/kubelet.conf' >> /etc/environment
+
+# source the ubuntu global env file to make kubelet variables available to this session
+source /etc/environment
 
 # Check "https://github.com/kubernetes/kubernetes/issues/69665" for kubelet config file example
 
 # NOTE: Environment variables must be expanded inside the ${KUBELET_CONFIGURATION_FILE}. Any ENV variable in
 # ${KUBELET_CONFIGURATION_FILE} make kubelet to fail
 
-
-sudo tee ${KUBELET_CONFIGURATION_FILE} > /dev/null <<EOL
+sudo tee "${KUBELET_CONFIGURATION_FILE}" > /dev/null <<EOL
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 nodeStatusUpdateFrequency: 10s
@@ -62,12 +59,15 @@ authorization:
   mode: Webhook
 clusterDomain: "cluster.local"
 clusterDNS:
-  - "10.32.0.10"
-podCIDR: "${POD_CIDR}"
+  - "${KUBERNETES_CLUSTER_DNS}"
+podCIDR: "${KUBELET_POD_CIDR}"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
 tlsCertFile: "${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBELET_NODE_NAME}-kubelet.pem"
 tlsPrivateKeyFile: "${CFSSL_TLS_GUEST_FOLDER}/kubelet/${KUBELET_NODE_NAME}-kubelet-key.pem"
+featureGates:
+    ExpandPersistentVolumes: true
+    TaintBasedEvictions: true
 EOL
 
 sudo tee /etc/systemd/system/kubelet.service  > /dev/null <<"EOL"

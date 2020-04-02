@@ -74,7 +74,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 EnvironmentFile=/etc/default/kube-proxy.conf
 ExecStart=/usr/local/bin/kube-proxy \
     --kubeconfig=/vagrant/conf/kubeconfig/${KUBE_PROXY_NODE_NAME}/${KUBE_PROXY_NODE_NAME}-kube-proxy.kubeconfig \
-    --cluster-cidr="${KUBE_PROXY_POD_CIDR}"
+    --cluster-cidr="${KUBE_PROXY_POD_CIDR}" \
     --v=2
 
 Restart=on-failure
