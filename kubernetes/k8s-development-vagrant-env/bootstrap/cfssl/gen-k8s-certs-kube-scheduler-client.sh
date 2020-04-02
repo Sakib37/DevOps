@@ -33,11 +33,11 @@ cat - > ${CFSSL_TLS_GUEST_FOLDER}/kube-scheduler/${CERT_NAME}-csr.json <<EOF
       ${formatted_ip_addresses},
       "127.0.0.1",
       "localhost",
-      "10.0.2.2",
+      "10.0.2.15",
       "${HOSTNAME}",
       "${GATEWAY_IP}",
       "${GATEWAY_HOSTNAME}"
-    ],
+  ],
   "key": {
     "algo": "rsa",
     "size": 2048

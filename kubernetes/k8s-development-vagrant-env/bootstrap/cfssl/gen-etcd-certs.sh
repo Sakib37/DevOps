@@ -27,13 +27,13 @@ done
 
 # generate Etcd certificate signing request config for this VM
 
-cat - > ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-csr.json <<EOF
+cat - > "${CFSSL_TLS_GUEST_FOLDER}"/etcd/"${HOSTNAME}"-csr.json <<EOF
 {
   "CN": "${HOSTNAME}",
   "hosts": [
     ${formatted_ip_addresses},
     "127.0.0.1",
-    "10.0.2.2",
+    "10.0.2.15",
     "localhost",
     "${HOSTNAME}"
   ],
@@ -55,11 +55,11 @@ EOF
 
 # generate signed server certificate for etcd vm using the above csr
 
-cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
+cfssl gencert -ca="${CFSSL_TLS_GUEST_FOLDER}"/ca/ca.pem \
     -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem  \
     -config=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-config.json  \
     -profile=kubernetes \
-    ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-csr.json | cfssljson -bare ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-client
+    ${CFSSL_TLS_GUEST_FOLDER}/etcd/${HOSTNAME}-csr.json | cfssljson -bare "${CFSSL_TLS_GUEST_FOLDER}"/etcd/${HOSTNAME}-client
 
 cfssl gencert -ca=${CFSSL_TLS_GUEST_FOLDER}/ca/ca.pem \
     -ca-key=${CFSSL_TLS_GUEST_FOLDER}/ca/ca-key.pem \

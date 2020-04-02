@@ -53,13 +53,21 @@ EOL
 # Source: https://gist.github.com/TheBeachMaster/bf4348722032f2c8223b71ea06d2b07b
 #          https://gist.github.com/iamcryptoki/ed6925ce95f047673e7709f23e0b9939
 modprobe bridge
-echo "net.bridge.bridge-nf-call-iptables = 1" >> /etc/sysctl.conf
-echo "net.bridge.bridge-nf-call-ip6tables = 1" >> /etc/sysctl.conf
+ cat >> /etc/sysctl.conf << EOF
+
+net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+
+# Disable IPv6
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+EOF
+
+#echo "net.bridge.bridge-nf-call-iptables = 1" >> /etc/sysctl.conf
+#echo "net.bridge.bridge-nf-call-ip6tables = 1" >> /etc/sysctl.conf
 modprobe br_netfilter
 sysctl -p /etc/sysctl.conf
-
-
-
 
 cat > /etc/systemd/system/docker.service <<"EOL"
 [Unit]
@@ -82,8 +90,6 @@ TimeoutStartSec=0
 [Install]
 WantedBy=multi-user.target
 EOL
-
-
 
 systemctl daemon-reload && systemctl enable docker.service && systemctl restart docker.service
 

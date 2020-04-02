@@ -38,6 +38,13 @@ done
 cat - > ${CFSSL_TLS_GUEST_FOLDER}/service-accounts/${CERT_NAME}-csr.json <<EOF
 {
   "CN": "service-accounts",
+  "hosts": [
+    ${formatted_ip_addresses},
+    "127.0.0.1",
+    "10.0.2.15",
+    "localhost",
+    "${HOSTNAME}"
+  ],
   "key": {
     "algo": "rsa",
     "size": 2048
