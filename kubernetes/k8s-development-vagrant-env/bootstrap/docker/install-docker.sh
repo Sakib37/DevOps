@@ -39,6 +39,7 @@ tar xzf ${DOCKER_BINARY_VM_LOCATION} --strip-components=1 -C /usr/local/bin/ &>/
 
 # configure overlay2 as docker storage
 # source: https://docs.docker.com/storage/storagedriver/overlayfs-driver/#configure-docker-with-the-overlay-or-overlay2-storage-driver
+
 cat > /etc/docker/daemon.json <<"EOL"
 {
   "storage-driver": "overlay2"
@@ -53,7 +54,7 @@ EOL
 # Source: https://gist.github.com/TheBeachMaster/bf4348722032f2c8223b71ea06d2b07b
 #          https://gist.github.com/iamcryptoki/ed6925ce95f047673e7709f23e0b9939
 modprobe bridge
- cat >> /etc/sysctl.conf << EOF
+cat >> /etc/sysctl.conf <<EOL
 
 net.bridge.bridge-nf-call-iptables = 1
 net.bridge.bridge-nf-call-ip6tables = 1
@@ -62,7 +63,7 @@ net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
-EOF
+EOL
 
 #echo "net.bridge.bridge-nf-call-iptables = 1" >> /etc/sysctl.conf
 #echo "net.bridge.bridge-nf-call-ip6tables = 1" >> /etc/sysctl.conf
@@ -110,4 +111,4 @@ sudo bash -c "/usr/bin/newgrp docker"
 sudo curl -L https://raw.githubusercontent.com/docker/compose/1.22.0/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
 
 
-echo "Docker Engine v${DOCKER_ENGINE_VERSION} downloaded successfully"
+echo "Docker Engine v${DOCKER_ENGINE_VERSION} installed successfully"
